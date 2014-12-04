@@ -1,7 +1,7 @@
 
 
 %tex : %Rnw
-	./knit $@
+	./knit $<
 
 %pdf : %tex
-	pdflatex $@
+	pdflatex $<
