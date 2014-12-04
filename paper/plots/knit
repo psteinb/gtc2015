@@ -1,0 +1,11 @@
+#!/usr/bin/env Rscript
+
+argv = commandArgs(TRUE)
+
+if(length(argv) < 1){
+    stop("Usage: knit <.Rnw file>")
+}
+
+inputfile <- argv[1]
+library(knitr)
+knit(inputfile)

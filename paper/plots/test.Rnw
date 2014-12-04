@@ -1,0 +1,14 @@
+\documentclass [12pt]{article}
+\title{An example Rnw document}
+\author{Peter Steinbach}
+\begin{document}
+\maketitle
+<<example_chunk>>=
+x <- rnorm (100)
+y <- 5*x + rnorm (100)
+lm.out <- lm(y ~ x)
+plot(x,y)
+abline(lm.out$coef)
+@
+The estimated slope is \Sexpr{lm.out$coef [2]}.
+\end{document}
