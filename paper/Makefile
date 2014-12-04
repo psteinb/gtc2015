@@ -1,0 +1,4 @@
+
+lmvn:
+	pdflatex $@
+	pdflatex $@

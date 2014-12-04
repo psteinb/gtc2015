@@ -1,6 +1,7 @@
 \documentclass [12pt]{article}
-\title{}
-\author{Peter Steinbach}
+\title{Streaming FFTs on large 3D microscope image data}
+\author{Peter Steinbach, MPI CBG}
+%\institute{MPI CBG}
 \begin{document}
 \maketitle
 \begin{abstract}
@@ -8,23 +9,31 @@
 \end{abstract}
 
 \section{Introduction}
-\section[alg]{Algorithm}
+\section[sec:alg]{Algorithm}
 \section{Measurements}
 
 \subsection{Hardware}
-For the measurements at hand, a Dell T1500 work station was used equipped with two Intel Xeon E5-2540 v3 processors and 65 GB of RAM. The workstation supported a Nvidia Tesla K20c provided by the CUDA center of excellence. The operating system was CentOS 6.3 and all compilations were performed with gcc 4.8.3 and cuda 6.5.\\ 
+For the measurements at hand, a Dell TXXXX work station was used equipped with two Intel Xeon E5-2540 v3 processors and 65 GB of RAM. The workstation supported a Nvidia Tesla K20c provided by the CUDA center of excellence. The operating system was CentOS 6.3 and all compilations were performed with gcc 4.8.3 and cuda 6.5.\\ 
 To broaden the scope, a passively cooled Nvidia Tesla M2090 operated inside a rack-mounted Dell XXXXX with two E5-2640 v2 and 128 GB of RAM. The operating system was CentOS 6.3 and all compilations were performed with gcc 4.8.3 and cuda 6.5.\\
- 
+ Add more workstations here?
 \subsection{Micro Benchmarks}
 
-As shown in \ref{alg}, the application at hand relies heavily on 3D image stack convolutions with large kernels. In order to produce hypothesis on an efficient design of multi-view deconvolution, a benchmarks on FFT performance and 3D FFT based convolutions were conducted with artificial single precision data. All runs were performed under a \texttt{nvprof} in order to obtain the relevant statistics. Every data set containes 50 runs of the program. 
+As shown in section \ref{sec:alg}, the application at hand relies heavily on 3D image stack convolutions with large kernels. In order to produce hypothesis on an efficient design of multi-view deconvolution, a benchmarks on FFT performance and 3D FFT based convolutions were conducted with artificial single precision data. All runs were performed under a \texttt{nvprof} in order to obtain the relevant statistics. Every data set containes 50 runs of the program. 
 
 \paragraph{FFT runtimes}
 
 \paragraph{3D FFT based convolution}
 
+\subsection{Implementation Layout}
+
 \subsection{Integrated Benchmarks}
+
 \section{Validation}
+
+In order to validate, that this improved version of the multi-view deconvolution produces comparable results than the original Java implementation, we perform the algorithm on the celegans data provided by Stephan Preibisch. The resulting 3D stack from a lmvn run are compared by the l2norm to the canonical implementation.
+
 \section{Summary}
+
+
 \section{References}
 \end{document}
