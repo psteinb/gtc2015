@@ -1,14 +1,17 @@
 \documentclass [12pt]{article}
+\usepackage{url}
 \title{Streaming FFTs on large 3D microscope image data}
 \author{Peter Steinbach, MPI CBG}
 %\institute{MPI CBG}
 \begin{document}
 \maketitle
 \begin{abstract}
-  This paper is a placeholder and meant to accompany the talk to be given at GTC 2015. The abstract will be state at this place, once all the material is compiled and I consider this thing done.
+
 \end{abstract}
 
 \section{Introduction}
+
+  The Life Science community is on the verge to quantitavely model organism development in order to predict growth, wound recovery and other forms of tissue development in the near future. An essential experimental technique to deliver the input for these models is selective plane illumination microscopy (\url{http://openspim.org/Welcome_to_the_OpenSPIM_Wiki}). This in-vivo technique allows to tomograph evolving specimen during their development from embryo to adulthood. Given the high frequrency and data-rate produced by state-of-the-art cameras used in these experiments, these microscopes are capable and required to produce data volumes exceeding those found at the Large Hadron Collider (CERN, SUI). Because this imposes IT requirements far out of reach for common laboratories, the reduction of this data is vital for scientific success and discovery across the board. Software packages to reduce the inherent redundancy of the data have been created in the past, that soon started to utilize the computational power of General Purpose Graphics Processing Units (GPGPUs). One of these packages is the Multi-View Deconvolution plugin (\url{http://fiji.sc/Multi-View_Deconvolution}, \cite{2013arXiv1308.0730P}) by Stephan Preibisch for the Fiji Image Analysis Platform (\url{http://fiji.sc}). It's computationally intensive portions have recently been ported to GPUs and ofference an acceleration by a factor of 2 to 3. For this does not entirely meet the expectations of an streaming application, an open-source CUDA/C++ native library (\url{https://github.com/psteinb/libmultiviewnative}) was forged that hosts the core computation of the deconvolution. In other words, the library performs the iterative bayesian deconvolution on a multi-view 3D image data. Each iteration requires two large kernel convolutions (kernel radius greater around 100) with different point-spread functions. Further, not only the input data easily extends Gigabytes, the orchestration of memory transfers from host to device between iterations is crucial to provide high turnaround of results and swift procession through iterations to meet convergence. By implementing the library under high performance considerations, I have studied various techniques to implement these requirements which I would like to share with the community. This comprises: pinned/page-able data transfers and their relation to synchronous and asynchronous memory copies, driver managed data transfers, event-guided data transfers and more. I will introduce the audience to the concepts of these techniques and discuss my experiences with various CUDA versions on Nvidia hardware. A basic knowledge of CUDA (and the C++ language for the discussion of custom allocators) is required of the participant to my talk. Finally, I'd like to use the talk to attract developers or experts with similar problems to exchange experiences and views on the topic.
 \section[sec:alg]{Algorithm}
 \section{Measurements}
 
@@ -36,4 +39,6 @@ In order to validate, that this improved version of the multi-view deconvolution
 
 
 \section{References}
+\bibliographystyle{ieeetr}
+\bibliography{lmvn}
 \end{document}
