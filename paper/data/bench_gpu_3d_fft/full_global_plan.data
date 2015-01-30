@@ -1,4 +1,4 @@
-gpu alloc tx type repeats total_time_ms shape data_in_mb exp_gmem_in_mb cudaFree_perc cudaFree_ms cudaMemcpy_perc cudaMemcpy_ms cudaMalloc_perc cudaMalloc_ms
+gpu alloc tx trafo_type repeats total_time_ms shape data_in_mb exp_gmem_in_mb cudaFree_perc cudaFree_ms cudaMemcpy_perc cudaMemcpy_ms cudaMalloc_perc cudaMalloc_ms
 NVS_5200M incl_alloc incl_tx out-of-place 10 80 64x64x64 1 2.03125 0.73 0.561386 8.68 6.684839 1.49 1.149966
 NVS_5200M incl_alloc incl_tx out-of-place 10 90 128x64x64 2 4.0625 0.64 0.561883 14.79 13.00919 1.24 1.094707
 NVS_5200M incl_alloc incl_tx out-of-place 10 110 128x128x64 4 8.125 0.49 0.574007 22.01 25.85935 0.96 1.129535

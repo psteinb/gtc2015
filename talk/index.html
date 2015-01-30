@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+
+    <title>Streaming FFTs on Large 3D Microscope Images</title>
+
+    <meta name="description" content="Tests first, make fail, make pass and refactor">
+    <meta name="author" content="Peter Steinbach" >
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/black.css" id="theme">
+
+    <!-- Code syntax highlighting -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
+
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+
+    <!--[if lt IE 9]>
+	<script src="lib/js/html5shiv.js"></script>
+	<![endif]-->
+  </head>
+
+  <body>
+
+    <div class="reveal">
+
+      <!-- Any section element inside of this container is displayed as a slide -->
+      <div class="slides">
+	<section>
+	  <h1>Streaming FFTs on Large 3D Microscope Images</h1>
+	  <p><br></p>
+	  <p>
+	  <a href="mailto:steinbach@mpi-cbg.de">Peter Steinbach</a><br>
+	  San Jose, March 20, 2015<br>
+	  <a href="http://www.mpi-cbg.de">Max Planck Institute of Molecular Cell Biology and Genetics</a><br>
+	  </p>        
+	</section>
+	
+	<section>
+	  <h2>Disclaimer</h2>
+	  <p style="text-align: left;">This work is licensed under a<br> <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0<br> International License</a>.</p>
+	  <div style="position: absolute; top: 20%; right: 10%; max-width: 80%;">
+	    <a rel="license" href="http://creativecommons.org/licenses/by/4.0/" target="_blank"><img width="176" alt="Creative Commons License" src="local/cc-by.png" /></a>
+	  </div>
+
+	  <p style="text-align: left;"><br>
+	    All material contained in the slides are linked to their source if not produced by the author. If you find intellectual property is not attributed to your satisfaction, feel free to contact <a href="mailto:steinbach@mpi-cbg.de">me</a>.
+	  </p>
+	</section>
+
+	<section data-background="local/1024px-Old_book_basking_ridge-historical-society.jpg">
+	  <p>
+	  For details on any of the following, consult the corresponding arxiv preprint :
+	    <center>
+	      <a target="_blank">arxiv.org/abs/1503.xxxx</a>
+	    </center>
+	  </p>
+	</section>
+
+	<section>
+	  <h1>Outline</h1>
+            <ol style="font-size: 120%;">                                                                                                      
+              <li>SPIM and the biological data deluge</li>                                                                                                              
+              <li>Multi-View Deconvolution</li>
+              <li>From Model Systems to a Library</li>
+            </ol>
+	</section>
+
+	<section>
+	  <section data-background="local/1280px-Adult_Humpback_Whale_breaching.jpg">
+	    <h1 >SPIM and the biological data </h1><h1 style="color: gray;">deluge</h1>
+	  </section>
+
+	  <section>
+	    <h2>Selective Plane Illumination Microscopy</h2>
+	    <a rel="SPIM" href="https://en.wikipedia.org/wiki/Light_sheet_fluorescence_microscopy" target="_blank"><img width="1024" src="local/1280px-Spim_prinziple_en.svg.png" /></a>
+			
+	  </section>
+
+	  <section>
+	    <h2>Live 3D Organism Development</h2>
+
+	      <video poster="video/Drosophila_Embryogenesis_beads_removed.png" controls>
+		<source src="video/Drosophila_Embryogenesis_beads_removed.webm" type='video/webm; codecs="vp8.0, vorbis"'>
+		  <source src="video/Drosophila_Embryogenesis_beads_removed.mp4" type='video/mp4'>
+		    <p>This is fallback content</p>
+	      </video>
+			
+	  </section>
+
+	  <section data-background="local/pile_of_floppy_disks.jpg">
+	    <div style="background-color: rgba(255,255,255,.7); ">
+	    <h2 style="color: black;">The Deluge</h2>
+
+	     <table style="color: black; ">                                                                                              
+                  <thead>                                                                                                        
+                    <tr>                                                                                                         
+                      <th></th>                                                                                           
+                      <th style="text-align: right">color depth<br>(bit)</th>                                                       
+                      <th style="text-align: right">stack shape</th>
+                      <th style="text-align: right">data volume<br>(MB)</th>
+                    </tr>                                                                                                        
+                  </thead>
+		  <tbody>
+		  <tr>                                                                                                         
+                      <td>custom</td>
+                      <td style="text-align: right">16</td>
+                      <td style="text-align: right">2048x2048x800</td>
+                      <td style="text-align: right">6.4</td>
+                  </tr>
+		  <tr>                                                                                                         
+                    <td>propriatary</td>
+                    <td style="text-align: right">16</td>
+                    <td style="text-align: right">1920x1920x436</td>
+                    <td style="text-align: right">3.1</td>
+                  </tr> 
+                  </tbody>
+              </table>
+	     <p>
+	       <ul style="color: black;">
+		 <li>multiple angles (3-12), required by method</li>
+		 <li>multiple channels (different dyes)</li>
+		 <li>multiple timepoints (observe specimen over hours/days)</li>
+	       </ul>
+	     </p>
+	    </div> 
+	  </section>
+
+	</section>
+	
+	<section>
+	  
+	  <section data-background="local/1280px-Origami_spring.jpg">
+	    <h1 style="color: rgba(128,128,128,1);" >Multi-View Deconvolution</h1>
+	  </section>
+
+	  <section>
+	    <a href="http://www.nature.com/nmeth/journal/v11/n6/full/nmeth.2929.html"><h2>“Efficient Bayesian-based Multiview Deconvolution”</h2></a>
+	    <p> <br><br>S. Preibisch, F. Amat, E. Stamataki, M. Sarov, R.H. Singer, E. Myers and P. Tomancak <br><br>Nature Methods (2014), 11(6):645-648.</p>
+	  </section>
+
+	  <section>
+	    <h2>Algorithm</h2>
+	    <pre><code>
+stack_f32 running = stack_f32(const);
+stack_f32 view[n_view], kernel1[n_view],     //loaded from disk
+	  kernel2[n_view], weights[n_view];  //loaded from disk
+
+for( i : n_iterations){
+  for( v : n_view){
+    stack_f32 temp = running;
+    temp = convolve(temp,kernel1[v]);	     //FFT based
+    temp = view[v]/temp;
+    temp = convolve(temp,kernel2[v]);	     //FFT based
+    running = regularize(running, temp, weights);
+  }
+}
+	    </code></pre>
+	    <ul >
+	      <li>data type conversion from 16 to 32bit</li>
+	      <li>time domain convolutions not feasible due to kernel size</li>
+	    </ul>
+
+	  </section>
+	  
+	</section>
+
+	<section>
+	  <section data-background="local/expansion.png">
+	    <h1>From Model Systems to a Library</h1>
+	  </section>
+
+	  <section>
+	    <h2>3D FFTs</h2>
+	    <div style="max-width: 48%; text-align: left;">
+	      <pre><code>
+stack_f32 running;
+running = stack_f32(random);
+
+for( i : n_iterations){
+    fft_3d_r2c(running);
+}
+	    </code></pre>
+	      <ul>
+		<li>CUDA 6.5</li>
+		<li>gcc 4.8.1</li>
+	      </ul>
+	    </div> 
+
+	    <div style="max-width: 48%; text-align: right;">
+	      <figure>
+		<img src="" alt="gpu_vs_cpu" />
+	      </figure>
+	    </div> 
+	  </section>
+	</section>
+
+	<section>
+	  <section>
+	    <h1>Summary</h1>
+	  </section>
+	</section>
+      </div>
+
+    </div>
+
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.js"></script>
+
+    <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+      controls: true,
+      progress: true,
+      history: true,
+      center: true,
+
+      transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+      // Optional reveal.js plugins
+      dependencies: [
+      { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+      { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      { src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+      { src: 'plugin/zoom-js/zoom.js', async: true },
+      { src: 'plugin/notes/notes.js', async: true }
+      ]
+      });
+
+    </script>
+
+  </body>
+</html>
