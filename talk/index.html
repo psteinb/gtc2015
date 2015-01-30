@@ -228,32 +228,51 @@ for( i : n_iterations){
 
 	  <section>
 	    <h2>Convolutions</h2>
-	    <div style="max-width: 40%; text-align: left;float: left; margin: 1% auto;">
+	    <div style="max-width: 50%; text-align: left;float: left; margin: 1% auto;">
 	      <pre style="width: 100%;"><code>
 stack_f32 temp(random);
 stack_f32 kernels[n_views];
+float* d_kernel;
 
 batched_fft_r2c(kernels);
-cudaMemCpyAsync(kernels[0]);
+cudaMemCpyAsync(kernels[0],
+                d_kernel);
 
 for( i : n_views){
-    convolve(temp,);
+    cudaMemCpyAsync(kernels[i+1],
+                    d_kernel);
+    convolve(temp,kernels[i]);
 }
 	    </code></pre>
 	    </div> 
 	    
-	    <div style="max-width: 60%; text-align: right;float: right; margin: 1% auto;">
+	    <div style="max-width: 50%; text-align: right;float: right; margin: 1% auto;">
 	      <figure>
-		<img src="figures/nn.png" alt="gpu_vs_cpu convolve" />
+		<img alt="Plot is still to be created" />
 	      </figure>
 	    </div> 
-	    </div> 
+
 	     
 	  </section>
 
 	  <section>
 	    <h2>What about Managed Memory?</h2>
-	    <div style="max-width: 50%; text-align: left;float: left; margin: 1% auto;">
+	    
+<pre style="align: center;"><code data-trim>
+stack_f32 temp;
+cudaMallocManaged(temp.data());
+fill_with_random(temp.data());
+
+//assume: managed_stack_f32 uses cudaMallocManaged for allocation
+managed_stack_f32 kernels[n_views]; 
+batched_fft_r2c(kernels);
+
+for( i : n_views){
+    convolve(temp,kernels[i]);
+}
+	    </code></pre>
+	    
+	    <div style="max-width: 48%; text-align: left;float: left; margin: 1% auto;">
 	      <ul style="color: green;">
 		<li>don't worry about transfers anymore</li>
 		<li>less code</li>
@@ -261,17 +280,84 @@ for( i : n_views){
 	      </ul>
 	    </div> 
 	    
-	    <div style="max-width: 50%; text-align: right;float: right; margin: 1% auto;">
+	    <div style="max-width: 48%; text-align: right;float: right; margin: 1% auto;">
 	      <ul style="color: orange;">
 		<li>large input data</li>
-		<li>Nvidia Pascal generation will support GPU memory paging</li>
+		<li>Beware GPU memory oversubscription!</li>
+		<li>Nvidia Pascal will support GPU memory paging</li>
 	      </ul>
 	    </div> 
 	  </section>
 
 
-	</section>
 
+	  <section>
+	    <h2>2 Convolutions</h2>
+	    <div style="max-width: 50%; text-align: left;float: left; margin: 0 auto;">
+	      <pre style="width: 100%;font-size: 45%;"><code data-trim>
+stack_f32 temp(random);
+stack_f32 kernel1[n_views];
+stack_f32 kernel2[n_views];
+float* d_kernel1, d_kernel2;
+
+batched_fft_r2c(kernels);
+cudaMemCpyAsync(kernel1[0],
+                d_kernel1);
+
+for( i : n_views){
+    cudaMemCpyAsync(kernel1[i+1],
+                    d_kernel1);
+    convolve(temp,d_kernel1);
+
+    cudaMemCpyAsync(kernel2[i+1],
+                    d_kernel2);
+    convolve(temp,d_kernel2);
+}
+	    </code></pre>
+	    </div> 
+	    
+	    <div style="max-width: 50%; text-align: right;float: right; margin: 1% auto;">
+	      <figure>
+		<img alt="Plot is still to be created" />
+	      </figure>
+	    </div> 
+
+	     
+	  </section>
+
+	  <section>
+	    <h2>Convolutions, streams and events</h2>
+	    <div style="max-width: 50%; text-align: left;float: left; margin: 0 auto;">
+	      <pre style="width: 100%;font-size: 45%;"><code data-trim>
+stack_f32 temp(random);
+stack_f32 kernel1[n_views];
+stack_f32 kernel2[n_views];
+float* d_kernel1, d_kernel2;
+
+batched_fft_r2c(kernels);
+//code to be pasted here
+	    </code></pre>
+	    </div> 
+	    
+	    <div style="max-width: 50%; text-align: right;float: right; margin: 1% auto;">
+	      <figure>
+		<img alt="Plot is still to be created" />
+	      </figure>
+	    </div> 
+
+	     
+	  </section>
+
+	  <section>
+	    <h2>Final Results</h2>
+
+	      <figure>
+		<img alt="Plot is still to be created" />
+	      </figure>
+	     
+	  </section>
+
+	</section>
 
 
 	<section>
