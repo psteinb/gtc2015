@@ -171,7 +171,7 @@ for( i : n_iterations){
 }
 	    </code></pre>
 	    <ul >
-	      <li>data type conversion from 16 to 32bit</li>
+	      <li>data type conversion from 16bit to 32bit</li>
 	      <li>time domain convolutions not feasible due to kernel size</li>
 	    </ul>
 
@@ -186,28 +186,93 @@ for( i : n_iterations){
 
 	  <section>
 	    <h2>3D FFTs</h2>
-	    <div style="max-width: 48%; text-align: left;">
-	      <pre><code>
-stack_f32 running;
-running = stack_f32(random);
+	    <div style="max-width: 40%; text-align: left;float: left; margin: 1% auto;">
+	      <pre style="width: 100%;"><code>
+stack_f32 temp(random);
 
 for( i : n_iterations){
-    fft_3d_r2c(running);
+    fft_3d_r2c(temp);
 }
 	    </code></pre>
 	      <ul>
 		<li>CUDA 6.5</li>
 		<li>gcc 4.8.1</li>
+		<li>machine details</li>
 	      </ul>
 	    </div> 
 
-	    <div style="max-width: 48%; text-align: right;">
+	    <div style="max-width: 60%; text-align: right;float: right;">
 	      <figure>
-		<img src="" alt="gpu_vs_cpu" />
+		<img src="figures/gpu_cufft_r2c_incl_tx_incl_alloc_global_plan.png" alt="gpu_vs_cpu" />
 	      </figure>
 	    </div> 
 	  </section>
+
+	  <section>
+	    <h2>3D FFTs: CUDA API</h2>
+	    <div style="max-width: 60%; text-align: left;float: left; margin: 1% auto;">
+	      <figure>
+		<img src="figures/api_fraction_cufft_r2c_incl_tx_incl_alloc_inplace_global_plan.png" alt="gpu_vs_cpu CUDA API" />
+	      </figure>
+	    </div> 
+	    
+	    <div style="max-width: 40%; text-align: right;float: right; margin: 1% auto;">
+	      <ul>
+		<li>As expected, this is memory/transfer bound</li>
+		<li>use async transfers</li>
+		<li>use batched transforms</li>
+	      </ul>
+	    </div> 
+	     
+	  </section>
+
+	  <section>
+	    <h2>Convolutions</h2>
+	    <div style="max-width: 40%; text-align: left;float: left; margin: 1% auto;">
+	      <pre style="width: 100%;"><code>
+stack_f32 temp(random);
+stack_f32 kernels[n_views];
+
+batched_fft_r2c(kernels);
+cudaMemCpyAsync(kernels[0]);
+
+for( i : n_views){
+    convolve(temp,);
+}
+	    </code></pre>
+	    </div> 
+	    
+	    <div style="max-width: 60%; text-align: right;float: right; margin: 1% auto;">
+	      <figure>
+		<img src="figures/nn.png" alt="gpu_vs_cpu convolve" />
+	      </figure>
+	    </div> 
+	    </div> 
+	     
+	  </section>
+
+	  <section>
+	    <h2>What about Managed Memory?</h2>
+	    <div style="max-width: 50%; text-align: left;float: left; margin: 1% auto;">
+	      <ul style="color: green;">
+		<li>don't worry about transfers anymore</li>
+		<li>less code</li>
+		<li>better maintenance</li>
+	      </ul>
+	    </div> 
+	    
+	    <div style="max-width: 50%; text-align: right;float: right; margin: 1% auto;">
+	      <ul style="color: orange;">
+		<li>large input data</li>
+		<li>Nvidia Pascal generation will support GPU memory paging</li>
+	      </ul>
+	    </div> 
+	  </section>
+
+
 	</section>
+
+
 
 	<section>
 	  <section>
@@ -232,6 +297,7 @@ for( i : n_iterations){
       center: true,
 
       transition: 'slide', // none/fade/slide/convex/concave/zoom
+      margin: 0.07,
 
       // Optional reveal.js plugins
       dependencies: [
