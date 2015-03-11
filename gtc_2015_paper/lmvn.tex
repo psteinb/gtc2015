@@ -1,5 +1,12 @@
 \documentclass [12pt]{article}
 \usepackage{url}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+
+\include{listing_style}
+
 \title{Streaming FFTs on large 3D microscope image data}
 \author{Peter Steinbach, MPI CBG}
 %\institute{MPI CBG}
@@ -13,41 +20,23 @@
 
 Light sheet microscopy today has become the hallmark experimental technique of systems biology \cite{Huisken13082004, Keller14112008}. It allows image aquisition of large alive developing specimens, high temporal and spatial resolution, imaging from multiple angles as well as low photodamage to the specimen which enables long timelapse recordings. However, due to the limited optical performance of the used equipment and the constant tradeoff between acquisition frequency and resolution, segmenting the produced data for further analysis is challenging. Deconvolution is the operation of restoring spatial resolution and contrast of this data given the knowledge of the underlying optics after the imagery has been recorded. Here, Selective Plane Illumination Microscopy (SPIM) data offers high potentials for SPIM records the same geometric location from different angles.\newline
 
-The authors of \cite{2013arXiv1308.0730P} have provided an optimized formulation of the iterative expectation-maximization algorithm used to deconvolve SPIM data. Given the observations $\phi_\nu$ for each angle $\nu$ (also referred to as \textit{view}), the current estimate $\psi^{r+1}$ for iteration $r+1$ is given by (in a very general form):
+The authors of \cite{2013arXiv1308.0730P} have provided an optimized formulation of the iterative expectation-maximization algorithm used to deconvolve SPIM data. This implementation thereof \cite{gh_spim_registration} is the starting point for this study whose motivation is to further increase performance and turnover of the algorithm by porting it entirely to run on General Purpose Graphics Processing Units (GPGPUs) using the CUDA programming platform \cite{Nickolls:2008:CUDA}. The implementation is available as a free and open-source library from \cite{lmvn_repo}.\newline
 
-\begin{equation}
-\psi^{r+1} = \psi^{r} \prod_{\nu \in V} \frac{\phi_{\nu}}{\psi^{r} \ast P_{\nu} } \ast P^{compound}_{\nu}
-\end{equation}
+For the purpose of this paper, the subsequent discussion will first discuss the current algorithm implementation and common usage patterns(section \ref{sec:alg}), followed by a brief description of the benchmark hardware (section \ref{sec:hw}). The focus of the paper will then be on developing a performant implementation through a bottoms-up approach using model implementations (section \ref{}), before concluding with a summary and outlook (section \ref{sec:summ}).\newline
 
-Here, $P_{\nu}$ refers to the experimentally obtained optical point-spread function for angle $\nu$. $f \ast g$ denotes the discrete convolution of $f$ and $g$. $P^{compound}_{\nu}$ refers to a compound point spread function over all virtual views as a result of the mathematical framework described in \cite{2013arXiv1308.0730P}. The interested reader is hereby referred to the latter cited article for further details.\newline
+\section[sec:alg]{Algorithm Details and Usage}
+\include{algorithm}
 
-The implementation of the above was performed in java \cite{fiji_wiki_mvd} and is available as a plugin to the fiji image analysis platform \cite{fiji_website}. The core algorithm can be described in pseudo-code as in listing \ref{}.
+\clearpage
+\section[sec:hw]{Hardware}
 
+For the measurements at hand, a Dell T7810 work station was used equipped with two Intel Xeon E5-2540 v3 processors and 64 GB of DDR4-2133 RAM. The workstation supported a Nvidia Tesla K20c provided by the TU Dresden based CUDA Center Of Excellence. The operating system was CentOS 7. To broaden the scope, a passively cooled Nvidia Tesla M2090 operated inside a rack-mounted Dell C6100 with two E5-2640 and 128 GB of RAM. The operating system was CentOS 6.3 and all compilations were performed with gcc 4.8.3 and cuda 6.5. All compilations were performed with gcc 4.8.3 and cuda 6.5 except stated otherwise.
 
-\section[sec:alg]{Algorithm}
-\section{Measurements}
+\section[sec:models]{Model}
 
-\subsection{Hardware}
-For the measurements at hand, a Dell TXXXX work station was used equipped with two Intel Xeon E5-2540 v3 processors and 65 GB of RAM. The workstation supported a Nvidia Tesla K20c provided by the CUDA center of excellence. The operating system was CentOS 6.3 and all compilations were performed with gcc 4.8.3 and cuda 6.5.\\ 
-To broaden the scope, a passively cooled Nvidia Tesla M2090 operated inside a rack-mounted Dell XXXXX with two E5-2640 v2 and 128 GB of RAM. The operating system was CentOS 6.3 and all compilations were performed with gcc 4.8.3 and cuda 6.5.\\
- Add more workstations here?
-\subsection{Micro Benchmarks}
+\include{models}
 
-As shown in section \ref{sec:alg}, the application at hand relies heavily on 3D image stack convolutions with large kernels. In order to produce hypothesis on an efficient design of multi-view deconvolution, a benchmarks on FFT performance and 3D FFT based convolutions were conducted with artificial single precision data. All runs were performed under a \texttt{nvprof} in order to obtain the relevant statistics. Every data set containes 50 runs of the program. 
-
-\paragraph{FFT runtimes}
-
-\paragraph{3D FFT based convolution}
-
-\subsection{Implementation Layout}
-
-\subsection{Integrated Benchmarks}
-
-\section{Validation}
-
-In order to validate, that this improved version of the multi-view deconvolution produces comparable results than the original Java implementation, we perform the algorithm on the celegans data provided by Stephan Preibisch. The resulting 3D stack from a lmvn run are compared by the l2norm to the canonical implementation.
-
-\section{Summary}
+\section[sec:summ]{Summary}
 
 
 \section{References}
