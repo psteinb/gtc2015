@@ -33,26 +33,31 @@ data_incl_tx_incl_alloc <- filter(gpu_nd_data, grepl("incl_tx",tx) & grepl("incl
 data_incl_tx_excl_alloc <- filter(gpu_nd_data, grepl("incl_tx",tx) & grepl("excl_alloc",alloc ))
 data_excl_tx_excl_alloc <- filter(gpu_nd_data, grepl("excl_tx",tx) & grepl("excl_alloc",alloc ))
 
-
-runtime_incl_tx_incl_alloc <- ggplot(data_incl_tx_incl_alloc, aes(x=data_in_mb, y=total_time_ms, color=gpu, linetype=type)) 
+runtime_incl_tx_incl_alloc <- ggplot(data_incl_tx_incl_alloc, aes(x=data_in_mb, y=total_time_ms, color=gpu, linetype=trafo_type)) 
 runtime_incl_tx_incl_alloc <- runtime_incl_tx_incl_alloc + geom_line(size=1.5) + my_theme + scale_y_log10()
 runtime_incl_tx_incl_alloc <- runtime_incl_tx_incl_alloc + ylab("runtime / ms") + xlab("input data / MB")
 runtime_incl_tx_incl_alloc <- runtime_incl_tx_incl_alloc + ggtitle("R2C float32 FFT, cudaMemcpy & cudaMalloc incl.")
+runtime_incl_tx_incl_alloc
 ggsave(paste("gpu_cufft_r2c_incl_tx_incl_alloc",append_to_output,".png",sep=""),runtime_incl_tx_incl_alloc)
 
-
-runtime_incl_tx_excl_alloc <- ggplot(data_incl_tx_excl_alloc, aes(x=data_in_mb, y=total_time_ms, color=gpu, linetype=type)) 
+runtime_incl_tx_excl_alloc <- ggplot(data_incl_tx_excl_alloc, aes(x=data_in_mb, y=total_time_ms, color=gpu, linetype=trafo_type)) 
 runtime_incl_tx_excl_alloc <- runtime_incl_tx_excl_alloc + geom_line(size=1.5) + my_theme + scale_y_log10()
 runtime_incl_tx_excl_alloc <- runtime_incl_tx_excl_alloc + ylab("runtime / ms") + xlab("input data / MB")
 runtime_incl_tx_excl_alloc <- runtime_incl_tx_excl_alloc + ggtitle("R2C float32 FFT, cudaMemcpy incl")
 ggsave(paste("gpu_cufft_r2c_incl_tx_excl_alloc",append_to_output,".png",sep=""),runtime_incl_tx_excl_alloc)
 
-
-runtime_excl_tx_excl_alloc <- ggplot(data_excl_tx_excl_alloc, aes(x=data_in_mb, y=total_time_ms, color=gpu, linetype=type)) 
+runtime_excl_tx_excl_alloc <- ggplot(data_excl_tx_excl_alloc, aes(x=data_in_mb, y=total_time_ms, color=gpu, linetype=trafo_type)) 
 runtime_excl_tx_excl_alloc <- runtime_excl_tx_excl_alloc + geom_line(size=1.5) + my_theme + scale_y_log10()
 runtime_excl_tx_excl_alloc <- runtime_excl_tx_excl_alloc + ylab("runtime / ms") + xlab("input data / MB")
 runtime_excl_tx_excl_alloc <- runtime_excl_tx_excl_alloc + ggtitle("R2C float32 FFT")
 ggsave(paste("gpu_cufft_r2c_excl_tx_excl_alloc",append_to_output,".png",sep=""),runtime_excl_tx_excl_alloc)
 
 
-
+no_outofplace_no_laptopgpu <- filter(gpu_nd_data, grepl("incl_tx",tx) & grepl("incl_alloc",alloc ) & !grepl("NVS",gpu) & !grepl("out",trafo_type) )
+head(no_outofplace_no_laptopgpu)
+runtime_gpu <- ggplot(no_outofplace_no_laptopgpu, aes(x=data_in_mb, y=total_time_ms, color=gpu)) 
+runtime_gpu <- runtime_gpu + geom_line(size=1.5) + my_theme + scale_y_log10()
+runtime_gpu <- runtime_gpu + ylab("runtime / ms") + xlab("input data / MB")
+runtime_gpu <- runtime_gpu 
+ggsave(paste("synced_gpu_runtime",append_to_output,".png",sep=""),runtime_gpu)
+ggsave(paste("synced_gpu_runtime",append_to_output,".svg",sep=""),runtime_gpu)

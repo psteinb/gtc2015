@@ -23,7 +23,7 @@ library(grid)
 my_theme <-  theme_bw() + theme(axis.title.x = element_text(size=20),
                                 axis.title.y = element_text(size=20),
                                 axis.text.x = element_text(size=16),
-                                axis.text.y = element_text(size=16)) + theme(legend.title = element_text(size=22, face="bold")) + theme(legend.text = element_text( size = 20)) + theme(legend.title=element_blank()) + theme(legend.position="bottom") + theme(axis.text.x  = element_text()) + theme(legend.key = element_rect(colour = 'white', fill = 'white', size = 0., linetype='dashed')) + theme(legend.key.width = unit(1.5, "cm"))
+                                axis.text.y = element_text(size=16)) + theme(legend.title = element_text(size=22, face="bold")) + theme(legend.text = element_text( size = 20)) + theme(legend.title=element_blank()) + theme(legend.position="top") + theme(axis.text.x  = element_text()) + theme(legend.key = element_rect(colour = 'white', fill = 'white', size = 0., linetype='dashed')) + theme(legend.key.width = unit(1.5, "cm"))
 
 
 
@@ -100,3 +100,11 @@ p_api_fraction_excl_tx_excl_alloc_gmem_ops <- p_api_fraction_excl_tx_excl_alloc_
 p_api_fraction_excl_tx_excl_alloc_gmem_ops <- p_api_fraction_excl_tx_excl_alloc_gmem_ops + scale_y_continuous(limits = c(0, 100))
 ggsave("api_fraction_cufft_r2c_excl_tx_excl_alloc_gmem_ops.png",p_api_fraction_excl_tx_excl_alloc_gmem_ops)
 
+
+synced_gpu_api_fraction <- ggplot(data_api_incl_tx_incl_alloc_melted, aes(x=data_in_mb, y=value, colour=gpu, linetype=variable)) 
+synced_gpu_api_fraction <- synced_gpu_api_fraction + geom_line(size=1.5) + my_theme #+ scale_y_log10()
+synced_gpu_api_fraction <- synced_gpu_api_fraction + ylab("api runtime fraction / %") + xlab("input data / MB")
+synced_gpu_api_fraction <- synced_gpu_api_fraction
+synced_gpu_api_fraction <- synced_gpu_api_fraction + scale_y_continuous(limits = c(0, 100))
+ggsave(paste("synced_gpu_api_fraction",type_select,".png",sep=""),synced_gpu_api_fraction)
+ggsave(paste("synced_gpu_api_fraction",type_select,".svg",sep=""),synced_gpu_api_fraction)
