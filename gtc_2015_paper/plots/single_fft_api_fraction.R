@@ -22,12 +22,12 @@ library(grid)
 
 all_data$data_in_mb <- (as.numeric(all_data$stack_dims_x)*as.numeric(all_data$stack_dims_y)*as.numeric(all_data$stack_dims_z))*4/(1024*1024)
 all_data$shape <- sprintf("%sx%sx%s",all_data$stack_dims_x,all_data$stack_dims_y,all_data$stack_dims_z)
-
+all_data$dev_name[all_data$dev_name == 'GeForce_GTX_TITAN_Black'] <- 'Titan_Black'
 
 my_theme <-  theme_bw() + theme(axis.title.x = element_text(size=20),
                                 axis.title.y = element_text(size=20),
                                 axis.text.x = element_text(size=16),
-                                axis.text.y = element_text(size=16)) + theme(legend.title = element_text(size=22, face="bold")) + theme(legend.text = element_text( size = 20)) + theme(legend.title=element_blank()) + theme(legend.position="top") + theme(axis.text.x  = element_text()) + theme(legend.key = element_rect(colour = 'white', fill = 'white', size = 0., linetype='dashed')) + theme(legend.key.width = unit(1.5, "cm"))
+                                axis.text.y = element_text(size=16)) + theme(legend.title = element_text(size=22, face="bold")) + theme(legend.text = element_text( size = 16)) + theme(legend.title=element_blank()) + theme(legend.position="top") + theme(axis.text.x  = element_text()) + theme(legend.key = element_rect(colour = 'white', fill = 'white', size = 0., linetype='dashed')) + theme(legend.key.width = unit(1.5, "cm"))
 
 
 gpu_only <- filter(all_data, grepl("gpu",dev_type))
