@@ -1,28 +1,28 @@
 n_devices dev_type dev_name n_repeats total_time_ms stack_dims_x stack_dims_y stack_dims_z type_width_byte comment
-1 bench_cpu_many_nd_fft E5-2640v3 10 83.597 64 64 64 4 
-1 bench_cpu_many_nd_fft E5-2640v3 10 175.02 128 64 64 4 
-1 bench_cpu_many_nd_fft E5-2640v3 10 349.218 128 128 64 4 
-1 bench_cpu_many_nd_fft E5-2640v3 10 743.445 128 128 128 4 
-1 bench_cpu_many_nd_fft E5-2640v3 10 1773.4 256 128 128 4 
-1 bench_cpu_many_nd_fft E5-2640v3 10 4303.37 256 256 128 4 
-1 bench_cpu_many_nd_fft E5-2640v3 10 8529.78 256 256 256 4 
-1 bench_cpu_many_nd_fft E5-2640v3 10 19545.3 512 256 256 4 
-1 bench_cpu_many_nd_fft E5-2640v3 10 42249.6 512 512 256 4 
-1 bench_cpu_many_nd_fft E5-2640v3 10 77751.7 512 512 512 4 
-1 bench_cpu_many_nd_fft E5-2640v3 10 156833 1024 512 512 4 
-1 bench_cpu_many_nd_fft E5-2640v3 10 313890 1024 1024 512 4 
-1 bench_cpu_many_nd_fft E5-2640v3 10 742803 1024 1024 1024 4 
+1 bench_cpu_many_nd_fft 1xE5-2640v3 10 84.6142 64 64 64 4 global_plan,OK
+1 bench_cpu_many_nd_fft 1xE5-2640v3 10 225.287 128 64 64 4 global_plan,OK
+1 bench_cpu_many_nd_fft 1xE5-2640v3 10 415.275 128 128 64 4 global_plan,OK
+1 bench_cpu_many_nd_fft 1xE5-2640v3 10 763.048 128 128 128 4 global_plan,OK
+1 bench_cpu_many_nd_fft 1xE5-2640v3 10 1910.71 256 128 128 4 global_plan,OK
+1 bench_cpu_many_nd_fft 1xE5-2640v3 10 4147 256 256 128 4 global_plan,OK
+1 bench_cpu_many_nd_fft 1xE5-2640v3 10 9760.24 256 256 256 4 global_plan,OK
+1 bench_cpu_many_nd_fft 1xE5-2640v3 10 18238.5 512 256 256 4 global_plan,OK
+1 bench_cpu_many_nd_fft 1xE5-2640v3 10 37145.9 512 512 256 4 global_plan,OK
+1 bench_cpu_many_nd_fft 1xE5-2640v3 10 80494.2 512 512 512 4 global_plan,OK
+1 bench_cpu_many_nd_fft 1xE5-2640v3 10 154669 1024 512 512 4 global_plan,OK
+1 bench_cpu_many_nd_fft 1xE5-2640v3 10 309572 1024 1024 512 4 global_plan,OK
+1 bench_cpu_many_nd_fft 1xE5-2640v3 10 732924 1024 1024 1024 4 global_plan,OK
 n_devices dev_type dev_name n_repeats total_time_ms stack_dims_x stack_dims_y stack_dims_z type_width_byte comment
-16 bench_cpu_many_nd_fft E5-2640v3 10 13.2049 64 64 64 4 
-16 bench_cpu_many_nd_fft E5-2640v3 10 22.5989 128 64 64 4 
-16 bench_cpu_many_nd_fft E5-2640v3 10 44.1269 128 128 64 4 
-16 bench_cpu_many_nd_fft E5-2640v3 10 133.602 128 128 128 4 
-16 bench_cpu_many_nd_fft E5-2640v3 10 286.54 256 128 128 4 
-16 bench_cpu_many_nd_fft E5-2640v3 10 791.375 256 256 128 4 
-16 bench_cpu_many_nd_fft E5-2640v3 10 1376.63 256 256 256 4 
-16 bench_cpu_many_nd_fft E5-2640v3 10 2531.71 512 256 256 4 
-16 bench_cpu_many_nd_fft E5-2640v3 10 5788.74 512 512 256 4 
-16 bench_cpu_many_nd_fft E5-2640v3 10 12263.4 512 512 512 4 
-16 bench_cpu_many_nd_fft E5-2640v3 10 31355.4 1024 512 512 4 
-16 bench_cpu_many_nd_fft E5-2640v3 10 56015.4 1024 1024 512 4 
-16 bench_cpu_many_nd_fft E5-2640v3 10 97242.1 1024 1024 1024 4 
+16 bench_cpu_many_nd_fft 16xE5-2640v3 10 14.6898 64 64 64 4 global_plan,OK
+16 bench_cpu_many_nd_fft 16xE5-2640v3 10 28.5266 128 64 64 4 global_plan,OK
+16 bench_cpu_many_nd_fft 16xE5-2640v3 10 50.3887 128 128 64 4 global_plan,OK
+16 bench_cpu_many_nd_fft 16xE5-2640v3 10 118.193 128 128 128 4 global_plan,OK
+16 bench_cpu_many_nd_fft 16xE5-2640v3 10 380.788 256 128 128 4 global_plan,OK
+16 bench_cpu_many_nd_fft 16xE5-2640v3 10 871.71 256 256 128 4 global_plan,OK
+16 bench_cpu_many_nd_fft 16xE5-2640v3 10 2367.97 256 256 256 4 global_plan,OK
+16 bench_cpu_many_nd_fft 16xE5-2640v3 10 4568.67 512 256 256 4 global_plan,OK
+16 bench_cpu_many_nd_fft 16xE5-2640v3 10 6984.69 512 512 256 4 global_plan,OK
+16 bench_cpu_many_nd_fft 16xE5-2640v3 10 11649.5 512 512 512 4 global_plan,OK
+16 bench_cpu_many_nd_fft 16xE5-2640v3 10 30372.1 1024 512 512 4 global_plan,OK
+16 bench_cpu_many_nd_fft 16xE5-2640v3 10 62304.1 1024 1024 512 4 global_plan,OK
+16 bench_cpu_many_nd_fft 16xE5-2640v3 10 114764 1024 1024 1024 4 global_plan,OK
