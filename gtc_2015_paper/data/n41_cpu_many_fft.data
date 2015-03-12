@@ -12,7 +12,6 @@ n_devices dev_type dev_name n_repeats total_time_ms stack_dims_x stack_dims_y st
 1 bench_cpu_many_nd_fft 1xE5-26400 10 231569 1024 512 512 4 global_plan,OK
 1 bench_cpu_many_nd_fft 1xE5-26400 10 480792 1024 1024 512 4 global_plan,OK
 1 bench_cpu_many_nd_fft 1xE5-26400 10 952369 1024 1024 1024 4 global_plan,OK
-n_devices dev_type dev_name n_repeats total_time_ms stack_dims_x stack_dims_y stack_dims_z type_width_byte comment
 12 bench_cpu_many_nd_fft 12xE5-26400 10 15.7265 64 64 64 4 global_plan,OK
 12 bench_cpu_many_nd_fft 12xE5-26400 10 30.3711 128 64 64 4 global_plan,OK
 12 bench_cpu_many_nd_fft 12xE5-26400 10 57.7025 128 128 64 4 global_plan,OK

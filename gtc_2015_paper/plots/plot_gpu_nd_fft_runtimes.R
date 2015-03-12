@@ -57,7 +57,7 @@ no_outofplace_no_laptopgpu <- filter(gpu_nd_data, grepl("incl_tx",tx) & grepl("i
 head(no_outofplace_no_laptopgpu)
 runtime_gpu <- ggplot(no_outofplace_no_laptopgpu, aes(x=data_in_mb, y=total_time_ms, color=gpu)) 
 runtime_gpu <- runtime_gpu + geom_line(size=1.5) + my_theme + scale_y_log10()
-runtime_gpu <- runtime_gpu + ylab("runtime / ms") + xlab("input data / MB")
+runtime_gpu <- runtime_gpu + ylab("runtime / ms") + xlab("input data / MB") 
 runtime_gpu <- runtime_gpu 
 ggsave(paste("synced_gpu_runtime",append_to_output,".png",sep=""),runtime_gpu)
 ggsave(paste("synced_gpu_runtime",append_to_output,".svg",sep=""),runtime_gpu)
