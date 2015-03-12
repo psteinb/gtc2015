@@ -63,7 +63,7 @@ speed_up_gpu <- ggplot(best_gpu, aes(x=data_in_mb, y=as.numeric(speed_up_over_be
 speed_up_gpu <- speed_up_gpu + geom_line(size=1.5) + my_theme 
 speed_up_gpu <- speed_up_gpu + ylab(sprintf("speed-up over %s",cpu_name))
                                         #+ ylab(sprintf("speed-up = t(%s)/t(%s)",cpu_name, gpu_name))
-speed_up_gpu <- speed_up_gpu + xlab("input data / MB")
+speed_up_gpu <- speed_up_gpu + xlab("input data / MB") + ylim(0,1.5)
 speed_up_gpu <- speed_up_gpu + geom_hline(yintercept = 1, colour = 'blue', linetype = "dotted")
 
 ggsave("batched_gpu_speed_up.png",speed_up_gpu)

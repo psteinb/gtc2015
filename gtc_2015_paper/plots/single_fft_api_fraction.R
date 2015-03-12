@@ -52,4 +52,5 @@ synced_gpu_api_fraction <- synced_gpu_api_fraction + ylab("api runtime fraction 
 synced_gpu_api_fraction <- synced_gpu_api_fraction + scale_y_continuous(limits = c(0, 100))
 
 ggsave("synced_gpu_api_fraction.png",synced_gpu_api_fraction)
+ggsave("synced_gpu_api_fraction.pdf",synced_gpu_api_fraction)
 ggsave("synced_gpu_api_fraction.svg",synced_gpu_api_fraction)

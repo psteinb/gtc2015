@@ -27,6 +27,27 @@ for( i : n_iterations ){
 
 In listing \ref{lst:java_implementation}, \texttt{stack\_f32} refers to a type that describes a three dimensional image where each intensity is encoded as a 32-bit floating point number. Related to this, the C/C++ array notation is used to indicate that each run of the deconvolution requires all image views \texttt{stack\_f32 view[n\_view]}, all per-view PSFs \texttt{kernel1[n\_view]}, all compound PSFs \texttt{kernel2[n\_view]} and all weight distributions \texttt{weights[n\_view]} to be available in memory. \texttt{psi} notes the deconvolved view that is updated by each iteration of the double loop in line $4-5$. The function call \texttt{convolve} denotes the convolution described in equation \ref{iterative_deconv} as $\ast$. The regularization mentioned in listing \ref{lst:java_implementation} has been omitted from equation \ref{iterative_deconv} for the sake of clearity, but is further described in the corresponding paper \cite{2013arXiv1308.0730P}. Any padding to the input \texttt{view} and \texttt{weights} as well as embedding of both PSFs into zero-filled images of same shape as \texttt{view} is omitted from listing \ref{lst:java_implementation} for readability. \newline
 
+%TODO add pictures of contrast improvement
+% \begin{figure}[h]
+%   \centering
+%   \hfill
+%   \begin{subfigure}[b]{0.45\textwidth}
+%     \includegraphics[width=\textwidth]{plots/batched_cgpu_runtime}
+%     \caption{CUDA runtime}
+%     \label{fig:batched_fft_runtime}
+%   \end{subfigure}%
+%   \hfill
+%   \begin{subfigure}[b]{0.45\textwidth}
+%     \includegraphics[width=\textwidth]{plots/batched_gpu_speed_up}
+%     \caption{\gpu{} speed-up versus \cpu{}}
+%     \label{fig:batched_fft_speed_up}
+%   \end{subfigure}
+%   \hfill
+%   \caption{Runtimes for batched 3D FFT on synthetic data on \cpu{} with \fftw{} and on \gpu{} with \cufft{} (left, \ref{fig:single_fft_runtime}) and the relative speed-up of the asynchronous \gpu{} implementation using 2 streams (see figure \ref{fig:batched_fft_async2plans}) compared to the multi-core \cpu{} implementation (right, \ref{fig:batched_fft_speed_up})}
+%   \label{fig:rt_batched_fft}
+% \end{figure}
+
+
 \begin{table}
   \begin{tabular}{ccc}                                                                                                                                                                              
     \hline                                                                                                                                                                                         
