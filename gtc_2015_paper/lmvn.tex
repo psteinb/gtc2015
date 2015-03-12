@@ -1,4 +1,4 @@
-\documentclass [12pt]{article}
+\documentclass [a4paper,12pt]{article}
 \usepackage{url}
 \usepackage{xcolor}
 \usepackage{listings}
@@ -8,6 +8,7 @@
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{units}
+\usepackage{fullpage}
 
 \include{listing_style}
 \def \fftw {\texttt{fftw}}
@@ -31,21 +32,27 @@ Light sheet microscopy today has become the hallmark experimental technique of s
 
 The authors of \cite{2013arXiv1308.0730P} have provided an optimized formulation of the iterative expectation-maximization algorithm used to deconvolve SPIM data. This implementation thereof \cite{gh_spim_registration} is the starting point for this study whose motivation is to further increase performance and turnover of the algorithm by porting it entirely to run on General Purpose Graphics Processing Units (GPGPUs) using the CUDA programming platform \cite{Nickolls:2008:CUDA}. The implementation is available as a free and open-source library from \cite{lmvn_repo}.\newline
 
-For the purpose of this paper, the subsequent discussion will first discuss the current algorithm implementation and common usage patterns(section \ref{sec:alg}), followed by a brief description of the benchmark hardware (section \ref{sec:hw}). The focus of the paper will then be on developing a performant implementation through a bottoms-up approach using model implementations (section \ref{}), before concluding with a summary and outlook (section \ref{sec:summ}).\newline
+For the purpose of this paper, the subsequent discussion will first discuss the current algorithm implementation and common usage patterns(section \ref{sec:alg}), followed by a brief description of the benchmark hardware (section \ref{sec:hw}). The focus of the paper will then be on developing a performant implementation through a bottoms-up approach using model implementations (section \ref{sec:models}), before concluding with a summary and outlook (section \ref{sec:summ}).\newline
 
-\section[sec:alg]{Algorithm Details and Usage}
+\section{Algorithm Details and Usage}
+\label{sec:alg}
 \include{algorithm}
 
 \clearpage
-\section[sec:hw]{Hardware}
+\section{Hardware}
+\label{sec:hw}
 
-For the measurements at hand, a Dell T7810 work station was used equipped with two Intel Xeon E5-2540 v3 processors and 64 GB of DDR4-2133 RAM. The workstation supported a Nvidia Tesla K20c provided by the TU Dresden based CUDA Center Of Excellence. The operating system was CentOS 7. To broaden the scope, a passively cooled Nvidia Tesla M2090 operated inside a rack-mounted Dell C6100 with two E5-2640 and 128 GB of RAM. The operating system was CentOS 6.3 and all compilations were performed with gcc 4.8.3 and cuda 6.5. All compilations were performed with gcc 4.8.3 and cuda 6.5 except stated otherwise.
+For the measurements at hand, a Dell T7810 work station was used equipped with two Intel Xeon E5-2540 v3 processors and $\unit[64]{GB}$ of DDR4-2133 RAM. The workstation supported a Nvidia Tesla K20c provided by the TU Dresden based CUDA Center Of Excellence. The operating system was CentOS 7. To broaden the scope, a passively cooled Nvidia Tesla M2090 operated inside a rack-mounted Dell C6100 with two Intel Xeon E5-2640 and $\unit[128]{GB}$ of RAM. The operating system was CentOS 6.3 and all compilations were performed with gcc 4.8.3 and cuda 6.5. All compilations were performed with gcc 4.8.3 and cuda 6.5.14 except stated otherwise. Third, a second Dell T7810 work station with 2 Intel Xeon E5-2670 (Hyperthreading enabled), $\unit[64]{GB}$ of DDR4-2133 RAM and a Nvidia GeForce GTX Titan Black running CentOS 6.6 was included in the tests.
 
-\section[sec:models]{Model}
+\clearpage
+\section{Model}
+\label{sec:models}
 
 \include{models}
 
-\section[sec:summ]{Summary}
+\clearpage
+\section{Summary}
+\label{sec:summ}
 
 
 \section{References}
