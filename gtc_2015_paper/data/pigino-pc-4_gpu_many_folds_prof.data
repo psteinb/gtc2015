@@ -1,0 +1,11 @@
+n_devices dev_type dev_name n_repeats total_time_ms stack_dims_x stack_dims_y stack_dims_z type_width_byte comment cudaFree_perc cudaFree_ms cudaMemcpy_perc cudaMemcpy_ms cudaMalloc_perc cudaMalloc_ms
+1 bench_gpu_many_nd_folds GeForce_GTX_TITAN_Black 10 556.806 64 64 64 4 global_plan,NA 0 0 0 0 0 0
+1 bench_gpu_many_nd_folds GeForce_GTX_TITAN_Black 10 945.637 128 64 64 4 global_plan,NA 0 0 0 0 0 0
+1 bench_gpu_many_nd_folds GeForce_GTX_TITAN_Black 10 1712.03 128 128 64 4 global_plan,NA 0 0 0 0 0 0
+1 bench_gpu_many_nd_folds GeForce_GTX_TITAN_Black 10 3131.93 128 128 128 4 global_plan,NA 0 0 0 0 0 0
+1 bench_gpu_many_nd_folds GeForce_GTX_TITAN_Black 10 5975.15 256 128 128 4 global_plan,NA 0 0 0 0 0 0
+1 bench_gpu_many_nd_folds GeForce_GTX_TITAN_Black 10 13201.7 256 256 128 4 global_plan,NA 0 0 0 0 0 0
+1 bench_gpu_many_nd_folds GeForce_GTX_TITAN_Black 10 26233.3 256 256 256 4 global_plan,NA 0 0 0 0 0 0
+1 bench_gpu_many_nd_folds GeForce_GTX_TITAN_Black 10 52135.8 512 256 256 4 global_plan,NA 0 0 0 0 0 0
+1 bench_gpu_many_nd_folds GeForce_GTX_TITAN_Black 10 104652 512 512 256 4 global_plan,NA 0 0 0 0 0 0
+1 bench_gpu_many_nd_folds GeForce_GTX_TITAN_Black 10 209125 512 512 512 4 global_plan,NA 0 0 0 0 0 0
