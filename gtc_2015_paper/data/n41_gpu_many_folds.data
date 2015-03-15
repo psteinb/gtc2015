@@ -1,0 +1,6 @@
+n_devices dev_type dev_name n_repeats total_time_ms stack_dims_x stack_dims_y stack_dims_z type_width_byte comment
+1 bench_gpu_many_nd_folds Tesla_M2090 10 802.8 128 64 64 4 global_plan,NA
+1 bench_gpu_many_nd_folds Tesla_M2090 10 1280.85 128 128 64 4 global_plan,NA
+1 bench_gpu_many_nd_folds Tesla_M2090 10 2308.45 128 128 128 4 global_plan,NA
+1 bench_gpu_many_nd_folds Tesla_M2090 10 4420.48 256 128 128 4 global_plan,NA
+1 bench_gpu_many_nd_folds Tesla_M2090 10 9924.45 256 256 128 4 global_plan,NA

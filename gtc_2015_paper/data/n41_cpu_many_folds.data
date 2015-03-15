@@ -1,0 +1,14 @@
+n_devices dev_type dev_name n_repeats total_time_ms stack_dims_x stack_dims_y stack_dims_z type_width_byte comment
+12 bench_cpu_many_nd_folds 12xE5-26400 10 267.462 64 64 64 4 global_plan,OK
+12 bench_cpu_many_nd_folds 12xE5-26400 10 642.43 128 64 64 4 global_plan,OK
+12 bench_cpu_many_nd_folds 12xE5-26400 10 1135.73 128 128 64 4 global_plan,OK
+12 bench_cpu_many_nd_folds 12xE5-26400 10 2242.36 128 128 128 4 global_plan,OK
+12 bench_cpu_many_nd_folds 12xE5-26400 10 4692.34 256 128 128 4 global_plan,OK
+12 bench_cpu_many_nd_folds 12xE5-26400 10 11559.3 256 256 128 4 global_plan,OK
+12 bench_cpu_many_nd_folds 12xE5-26400 10 22594 256 256 256 4 global_plan,OK
+12 bench_cpu_many_nd_folds 12xE5-26400 10 43795.3 512 256 256 4 global_plan,OK
+12 bench_cpu_many_nd_folds 12xE5-26400 10 87276.5 512 512 256 4 global_plan,OK
+12 bench_cpu_many_nd_folds 12xE5-26400 10 176390 512 512 512 4 global_plan,OK
+12 bench_cpu_many_nd_folds 12xE5-26400 10 356395 1024 512 512 4 global_plan,OK
+12 bench_cpu_many_nd_folds 12xE5-26400 10 723971 1024 1024 512 4 global_plan,OK
+12 bench_cpu_many_nd_folds 12xE5-26400 10 1.55907e+06 1024 1024 1024 4 global_plan,OK
