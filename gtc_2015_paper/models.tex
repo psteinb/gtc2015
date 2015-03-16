@@ -114,7 +114,26 @@ As listing \ref{lst:batched_fft_cpu} illustrates, plan reuse is performed and \f
   \label{fig:nvprof_batched_fft}
 \end{figure}
 
-Figure \ref{fig:nvprof_batched_fft} illustrates possible advantages and disadvantages of the applied techniques. As the documentation of the corresponding code for figure \ref{fig:nvprof_batched_fft} would be rather long, the interested reader is deferred to \texttt{bench\_gpu\_many\_nd\_fft.cu} of the \lmvn{} benchmark suite available through \cite{lmvn_repo}. What however becomes clear is that synchronous (figure \ref{fig:batched_fft_sync}) are not beneficial as data transfers to the \gpu{} are performed sequentially. Asynchronous transfers using the same number of streams as there are image stacks (figure \ref{fig:batched_fft_async}) are also not performant. But if the number of transfer streams correlates with the number of copy engines the \gpu{} offers, data transfers and computations can be overlaid to some extent and runtime benefits can be obtained (figure \ref{fig:batched_fft_async2plans}). Besides, the data transfer techniques depicted in figure \ref{fig:nvprof_batched_fft}, mapped memory usage (buffers are marked by \texttt{cudaHostRegister} and their device pointer is obtained through \texttt{cudaHostGetDevicePointer}) and managed unified memory (all data is allocated by \texttt{cudaMallocManaged}) by \cufft{}  was benchmarked. The results for ``managed'' memory usage are not shown here for time measurements did not correlated at all with the measurements obtained in \texttt{nvprof}. 
+Figure \ref{fig:nvprof_batched_fft} illustrates possible advantages and disadvantages of the applied techniques. As the documentation of the corresponding code for figure \ref{fig:nvprof_batched_fft} would be rather long, the interested reader is deferred to \texttt{bench\_gpu\_many\_nd\_fft.cu} of the \lmvn{} benchmark suite available through \cite{lmvn_repo}. 
+
+\begin{lstlisting}[caption={Asynchronous Batched FFT on synthetic data performed on GPU in pseudo-code based on the \cufft{} syntax.},label={lst:batched_fft_gpu_async2plans}]
+stack_f32 synthetic_data[n_view];
+
+fftwf_plan plan = fftw_plan_dft_r2c(3,
+                                    synthetic_data[0].shape(),
+                                    synthetic_data[0].ptr(),
+                                    synthetic_data[0].ptr(),
+                                    FFTW_MEASURE);
+//start timing
+for ( v : n_view )
+  fftwf_execute_dft_r2c(plan, 
+                        synthetic_data[v].ptr(),
+                        synthetic_data[v].ptr());
+//end timing
+\end{lstlisting}
+
+
+What however becomes clear is that synchronous (figure \ref{fig:batched_fft_sync}) are not beneficial as data transfers to the \gpu{} are performed sequentially. Asynchronous transfers using the same number of streams as there are image stacks (figure \ref{fig:batched_fft_async}) are also not performant. But if the number of transfer streams correlates with the number of copy engines the \gpu{} offers, data transfers and computations can be overlaid to some extent and runtime benefits can be obtained (figure \ref{fig:batched_fft_async2plans}). Besides, the data transfer techniques depicted in figure \ref{fig:nvprof_batched_fft}, mapped memory usage (buffers are marked by \texttt{cudaHostRegister} and their device pointer is obtained through \texttt{cudaHostGetDevicePointer}) and managed unified memory (all data is allocated by \texttt{cudaMallocManaged}) by \cufft{}  was benchmarked. The results for ``managed'' memory usage are not shown here for time measurements did not correlated at all with the measurements obtained in \texttt{nvprof}. 
 
 \begin{figure}[h]
   \centering
@@ -136,7 +155,9 @@ Figure \ref{fig:nvprof_batched_fft} illustrates possible advantages and disadvan
 \end{figure}
 
 
-Firgure \ref{fig:rt_batched_fft} shows that the implementation using ``mapped'' memory chosen for this benchmark is clearly very slow. The synchronized implementation is on par with the \cpu{} implementation for data volumes of $\unit[150]{MB}$ and less. Above this threshold, the multi-core implementation is more performant. As emphasized by figure \ref{fig:batched_fft_speed_up}, given an input data volume of $\unit[50-250]{MB}$, this implementation is faster than the \cpu{} implementation. The situation depends on the \gpu{} model. This is due to the fact that both the GeForce Titan Black and the Tesla M2090 do only contain 1 copy engine. The device is henceforth forced to serialize asynchronous data transfers and kernel execution.
+Firgure \ref{fig:rt_batched_fft} shows that the implementation using ``mapped'' memory chosen for this benchmark is clearly very slow. The synchronized implementation is on par with the \cpu{} implementation for data volumes of $\unit[150]{MB}$ and less. Above this threshold, the multi-core implementation is more performant. As emphasized by figure \ref{fig:batched_fft_speed_up}, given an input data volume of $\unit[50-250]{MB}$, this implementation is faster than the \cpu{} implementation. The situation depends on the \gpu{} model. This is due to the fact that both the GeForce Titan Black and the Tesla M2090 do only contain 1 copy engine. The device is henceforth forced to serialize asynchronous data transfers and kernel execution.\newline
+
+It must be noted at this point, as the application at hand (see listing \ref{lst:java_implementation}) is applied to large data sets, the use of \texttt{cufftPlanMany} is prohibitive. At the time of writing, a subsequent call to \texttt{cufftExecR2C} on a plan thus created must retain all input/output data on device. Using \texttt{cufftPlanMany} in the context of figure \ref{fig:rt_batched_fft} may be considered an important reference benchmark.
 
 \subsection{Batched Convolutions}
 
