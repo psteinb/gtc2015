@@ -61,6 +61,7 @@ ggsave("batched_cgpu_runtime.png",runtime_gpu)
 ggsave("batched_cgpu_runtime.svg",runtime_gpu)
 ggsave("batched_cgpu_runtime.pdf",runtime_gpu)
 
+#pick only entries that are both in cpu and gpu
 data_to_plot <- gpu_only
 best_gpu <- filter(data_to_plot,tx_type == "async2plans")
 gpu_data_sizes <- levels(as.factor(filter(best_gpu, grepl("K20",dev_name) )$data_in_mb))
