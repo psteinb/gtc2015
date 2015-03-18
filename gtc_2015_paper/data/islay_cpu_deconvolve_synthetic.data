@@ -10,7 +10,6 @@ n_devices dev_type dev_name n_repeats total_time_ms stack_dims_x stack_dims_y st
 1 bench_cpu_deconvolve_synthetic 1xE5-2640v3 10 216918 512 512 256 4 nstacks=24
 1 bench_cpu_deconvolve_synthetic 1xE5-2640v3 10 421572 512 512 512 4 nstacks=24
 1 bench_cpu_deconvolve_synthetic 1xE5-2640v3 10 1.03086e+06 1024 512 512 4 nstacks=24
-n_devices dev_type dev_name n_repeats total_time_ms stack_dims_x stack_dims_y stack_dims_z type_width_byte comment
 16 bench_cpu_deconvolve_synthetic 16xE5-2640v3 10 1015.28 64 64 64 4 nstacks=24
 16 bench_cpu_deconvolve_synthetic 16xE5-2640v3 10 1601.96 128 64 64 4 nstacks=24
 16 bench_cpu_deconvolve_synthetic 16xE5-2640v3 10 2598.68 128 128 64 4 nstacks=24

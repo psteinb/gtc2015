@@ -68,7 +68,7 @@ runtime_gpu <- ggplot(new_gpu_data, aes(x=data_in_mb, y=as.numeric(speed_up), co
 runtime_gpu <- runtime_gpu + geom_line(size=1.5) + my_theme + guides(linetype=FALSE) 
 runtime_gpu <- runtime_gpu + ylab(sprintf("speed-up over %s",c(cpu_only$dev_name)[0])) + xlab("input data / MB")#+ guides(color=guide_legend(nrow=2,byrow=TRUE)) #
 
-ggsave("batched_folds_gpu_runtime.png",runtime_gpu)
-ggsave("batched_folds_gpu_runtime.svg",runtime_gpu)
-ggsave("batched_folds_gpu_runtime.pdf",runtime_gpu)
+ggsave("batched_folds_gpu_speed_up.png",runtime_gpu)
+ggsave("batched_folds_gpu_speed_up.svg",runtime_gpu)
+ggsave("batched_folds_gpu_speed_up.pdf",runtime_gpu)
 

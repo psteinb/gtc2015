@@ -11,7 +11,6 @@ n_devices dev_type dev_name n_repeats total_time_ms stack_dims_x stack_dims_y st
 1 bench_cpu_many_nd_folds 1xE5-2670v3 10 645287 512 512 512 4 global_plan,OK
 1 bench_cpu_many_nd_folds 1xE5-2670v3 10 1.32641e+06 1024 512 512 4 global_plan,OK
 1 bench_cpu_many_nd_folds 1xE5-2670v3 10 2.8063e+06 1024 1024 512 4 global_plan,OK
-n_devices dev_type dev_name n_repeats total_time_ms stack_dims_x stack_dims_y stack_dims_z type_width_byte comment
 48 bench_cpu_many_nd_folds 48xE5-2670v3 10 517.41 64 64 64 4 global_plan,OK
 48 bench_cpu_many_nd_folds 48xE5-2670v3 10 983.439 128 64 64 4 global_plan,OK
 48 bench_cpu_many_nd_folds 48xE5-2670v3 10 2240.43 128 128 64 4 global_plan,OK
