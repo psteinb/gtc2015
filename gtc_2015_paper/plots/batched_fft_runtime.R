@@ -32,9 +32,9 @@ my_theme <-  theme_bw() + theme(axis.title.x = element_text(size=20),
 cpu_only <- filter(all_data, grepl("cpu",dev_type) , n_devices!=1, grepl("v3",dev_name))
 cpu_only$tx_type <- "sync"
 
-all_data <- mutate(all_data, tx_type = gsub('([a-z]+),.*','\\1',comment))
+all_data <- mutate(all_data, tx_type = gsub('([a-z0-9]+),.*','\\1',comment))
 
-gpu_only <- filter(all_data, grepl("gpu",dev_type), grepl("global_plan",comment), grepl("OK",comment), grepl("inplace",comment), "mangd" != tx_type, tx_type != "async")
+gpu_only <- filter(all_data, grepl("gpu",dev_type), grepl("OK",comment), grepl("inplace",comment), "mangd" != tx_type, tx_type != "async")
 gpu_only$dev_name[gpu_only$dev_name == 'GeForce_GTX_TITAN_Black'] <- 'Titan_Black'
 
 data_to_plot <- cpu_only
@@ -54,7 +54,7 @@ data_to_plot <- rbind(filter(gpu_only, grepl("K20", dev_name) | grepl("Titan", d
 runtime_gpu <- ggplot(data_to_plot, aes(x=data_in_mb, y=as.numeric(total_time_ms), color=as.factor(dev_name), linetype=tx_type )) 
 runtime_gpu <- runtime_gpu + geom_line(size=1.5) + my_theme  +scale_color_brewer(palette="Set1") 
 runtime_gpu <- runtime_gpu + scale_linetype_manual(values=c("solid","dashed","dotted"))
-runtime_gpu <- runtime_gpu + guides(color=guide_legend(ncol=1)) + theme(legend.position="top")
+runtime_gpu <- runtime_gpu + guides(color=guide_legend(ncol=3)) + theme(legend.position="top")
 runtime_gpu <- runtime_gpu + ylab("runtime / ms") + xlab("input data / MB")+ guides(linetype=guide_legend(nrow=1)) + xlim(0,1024) + ylim(100,.9*max(c(data_to_plot$total_time_ms))) + scale_y_log10()
 
 ggsave("batched_cgpu_runtime.png",runtime_gpu)
@@ -66,37 +66,39 @@ select_sizes <- function(tag, cpu_data, gpu_data) {
 
   gpu_rows <- filter(gpu_data, shape == tag)
   gpu_data_sizes <- levels(as.factor(gpu_rows$data_in_mb))
+
+  if(length(gpu_data_sizes)>0){
   selected_cpu_rows <- filter(cpu_data, data_in_mb %in% c(gpu_data_sizes) )
   gpu_rows$speed_up <-  as.numeric(selected_cpu_rows$total_time_ms) / as.numeric(gpu_rows$total_time_ms)
   gpu_rows$cpu_total_time_ms <- as.numeric(selected_cpu_rows$total_time_ms)
   
   gpu_rows
-  
+}
 }
 
 
-## data_to_plot <- gpu_only
-## best_gpu <- filter(data_to_plot,tx_type == "async2plans")
-## gpu_data_sizes <- levels(as.factor(filter(best_gpu, grepl("K20",dev_name) )$data_in_mb))
-## gpu_names <- c(levels(as.factor(best_gpu$dev_name)))
-## best_gpu <- filter(best_gpu, data_in_mb %in% c(gpu_data_sizes) )
+islay_cpu_data <- filter(cpu_only, n_devices<40)
 
-## cpu_only_reduced <- filter(cpu_only, data_in_mb %in% c(gpu_data_sizes) , n_devices<40)
-## sprintf("original cpu_only_reduced %i,found %i gpu names, gpu_data_sizes %i",nrow(cpu_only_reduced),length(gpu_names),length(gpu_data_sizes))
-## cpu_only_reduced <- do.call(rbind, replicate(length(gpu_names), cpu_only_reduced, simplify=FALSE))
+k20_data <- filter(data_to_plot, grepl("K20", dev_name))
+shapes_to_loop <- c(levels(as.factor(k20_data$shape)))
+k20_speed_ups <- do.call("rbind", lapply(shapes_to_loop, FUN = select_sizes, islay_cpu_data, k20_data))
 
+non_k20_data <- filter(data_to_plot, grepl("Titan", dev_name))
+shapes_to_loop <- c(levels(as.factor(non_k20_data$shape)))
 
-## ## best_gpu should match cpu_only_reduced now
-## sprintf("best_gpu should match cpu_only_reduced now %i %i",nrow(best_gpu),nrow(cpu_only_reduced))
-## head(cpu_only_reduced)
+if(length(non_k20_data)>0){
+  non_k20_speed_ups <- do.call("rbind", lapply(shapes_to_loop, FUN = select_sizes, islay_cpu_data, non_k20_data))
+  k20_speed_ups <- rbind(k20_speed_ups,non_k20_speed_ups)
+}
 
-## best_gpu$cpu_time_ms <- as.numeric(cpu_only_reduced$total_time_ms)
-## best_gpu$speed_up_over_best_cpu <- best_gpu$cpu_time_ms / best_gpu$total_time_ms
+levels(as.factor(k20_speed_ups$dev_name))
+levels(as.factor(k20_speed_ups$tx_mode))
 
+k20_speed_ups
 
-speed_up_gpu <- ggplot(best_gpu, aes(x=data_in_mb, y=as.numeric(speed_up_over_best_cpu), linetype=as.factor(dev_name) )) 
+speed_up_gpu <- ggplot(k20_speed_ups, aes(x=data_in_mb, y=as.numeric(speed_up), color=as.factor(dev_name), linetype=as.factor(tx_type) )) 
 speed_up_gpu <- speed_up_gpu + geom_line(size=1.5) + my_theme
-cpu_name <- c(levels(as.factor(cpu_only_reduced$dev_name)))
+cpu_name <- c(levels(as.factor(islay_cpu_data$dev_name)))
 speed_up_gpu <- speed_up_gpu + ylab(sprintf("speed-up over %s",cpu_name))
 speed_up_gpu <- speed_up_gpu + xlab("input data / MB") + ylim(0,1.5) + scale_linetype_manual(values=c("solid","dashed","dotted"))
 speed_up_gpu <- speed_up_gpu + geom_hline(yintercept = 1, colour = 'blue', linetype = "dotted")

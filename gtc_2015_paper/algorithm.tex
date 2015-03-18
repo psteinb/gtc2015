@@ -25,43 +25,52 @@ for( i : n_iterations ){
 }
 \end{lstlisting}
 
-In listing \ref{lst:java_implementation}, \texttt{stack\_f32} refers to a type that describes a three dimensional image where each intensity is encoded as a 32-bit floating point number. Related to this, the C/C++ array notation is used to indicate that each run of the deconvolution requires all image views \texttt{stack\_f32 view[n\_view]}, all per-view PSFs \texttt{kernel1[n\_view]}, all compound PSFs \texttt{kernel2[n\_view]} and all weight distributions \texttt{weights[n\_view]} to be available in memory. \texttt{psi} notes the deconvolved view that is updated by each iteration of the double loop in line $4-5$. The function call \texttt{convolve} denotes the convolution described in equation \ref{iterative_deconv} as $\ast$. The regularization mentioned in listing \ref{lst:java_implementation} has been omitted from equation \ref{iterative_deconv} for the sake of clearity, but is further described in the corresponding paper \cite{2013arXiv1308.0730P}. Any padding to the input \texttt{view} and \texttt{weights} as well as embedding of both PSFs into zero-filled images of same shape as \texttt{view} is omitted from listing \ref{lst:java_implementation} for readability. \newline
+In listing \ref{lst:java_implementation}, \texttt{stack\_f32} refers to a type that describes a three dimensional image where each intensity is encoded as a 32-bit floating point number. Related to this, the C/C++ array notation is used to indicate that each run of the deconvolution requires all image views \texttt{stack\_f32 view[n\_view]}, all per-view PSFs \texttt{kernel1[n\_view]}, all compound PSFs \texttt{kernel2[n\_view]} and all weight distributions \texttt{weights[n\_view]} to be available in memory. \texttt{psi} notes the deconvolved view that is updated by each iteration of the double loop in line $4-5$. The function call \texttt{convolve} denotes the convolution described in equation \ref{iterative_deconv} as $\ast$. The regularization mentioned in listing \ref{lst:java_implementation} has been omitted from equation \ref{iterative_deconv} for the sake of clearity, but is further described in the corresponding paper \cite{2013arXiv1308.0730P}. Any padding to the input \texttt{view} and \texttt{weights} as well as embedding of both PSFs into zero-filled images of the same shape as \texttt{view} is omitted from listing \ref{lst:java_implementation} also for readability. \newline
 
-%TODO add pictures of contrast improvement
-% \begin{figure}[h]
-%   \centering
-%   \hfill
-%   \begin{subfigure}[b]{0.45\textwidth}
-%     \includegraphics[width=\textwidth]{plots/batched_cgpu_runtime}
-%     \caption{CUDA runtime}
-%     \label{fig:batched_fft_runtime}
-%   \end{subfigure}%
-%   \hfill
-%   \begin{subfigure}[b]{0.45\textwidth}
-%     \includegraphics[width=\textwidth]{plots/batched_gpu_speed_up}
-%     \caption{\gpu{} speed-up versus \cpu{}}
-%     \label{fig:batched_fft_speed_up}
-%   \end{subfigure}
-%   \hfill
-%   \caption{Runtimes for batched 3D FFT on synthetic data on \cpu{} with \fftw{} and on \gpu{} with \cufft{} (left, \ref{fig:single_fft_runtime}) and the relative speed-up of the asynchronous \gpu{} implementation using 2 streams (see figure \ref{fig:batched_fft_async2plans}) compared to the multi-core \cpu{} implementation (right, \ref{fig:batched_fft_speed_up})}
-%   \label{fig:rt_batched_fft}
-% \end{figure}
+\begin{figure}[h]
+  \centering
+  \hfill
+  \begin{subfigure}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{img/janosch_celegans_DAPI_nuclei_it1}
+    \caption{start}
+    \label{fig:iterate_start}
+  \end{subfigure}%
+  \hfill
+  \begin{subfigure}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{img/janosch_celegans_DAPI_nuclei_it3}
+    \caption{iteration $2/5$}
+    \label{fig:iterate_2}
+  \end{subfigure}
+  \hfill
+  \hfill
+  \begin{subfigure}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{img/janosch_celegans_DAPI_nuclei_it5}
+    \caption{iteration $5/5$}
+    \label{fig:iterate_final}
+  \end{subfigure}
+  \hfill
+  \caption{C. Elegans embryo data contrast improvements from multi-view deconvolution after no (figure \ref{fig:iterate_start}), after $2$ (figure \ref{fig:iterate_2}) and after $5$ iterations (figure \ref{fig:iterate_final}). }
+  \label{fig:mvdeconv}
+\end{figure}
 
+Figure \ref{fig:mvdeconv} underlines the dramatic contrast improvements that \texttt{Multi-View Deconvolution} can yield. The data used this experiment was obtained from a commercial system, the Carl Zeiss Lightsheet Z.1, \cite{lz1}. 
 
-\begin{table}
+\begin{table}[bht]
+  \label{typ_datasets}
+  
   \begin{tabular}{ccc}                                                                                                                                                                              
     \hline                                                                                                                                                                                         
     View Shape  & Number of Views and Channels & Data Volume [MB]   \\
     \hline                                                       
     $928\times390\times390$ & $6 \times 1$ & $807$ \\
     $1670\times1070\times345$ & $4 \times 2$ & $4703$ \\
+    $1920\times1920\times320$ & $5 \times 1$ & $5625$ \\
     \hline                                                                                                                                                                                         
   \end{tabular} 
-  \label{typ_datasets}
-  \caption{Typical SPIM datasets dimensionality, number of views and color channels (per view). All datasets save the pixel intensity as 16-bit integer value. The latter has been used to calculate the raw data set volume.}
+  \caption{Typical SPIM dataset shapes, number of views and color channels (per view). All datasets save the pixel intensity as 16-bit integer value. The latter has been used to calculate the raw data set volume.}
 \end{table} 
 
-In order to set the implementation to scale, table \ref{typ_datasets} lists typical data sets from SPIM instruments. It is important to note that the majority of instruments store the image data as 16-bit integer value. Typical sizes of the PSF are on the order of $23 \times 81 \times 85$. \\
+In order to set the implementation to scale, table \ref{typ_datasets} lists typical data sets from SPIM instruments. It is important to note that the majority of instruments store the image data as 16-bit integer value. The PSF used for the deconvolution are obtained programmatically from sub-resolution beads distributed throughout the recorded volume inside the data set. Their sizes range are e.g. $79 \times 121 \times 101$ (obtained from the same data set that was used for figure \ref{fig:mvdeconv}). In order to save computations, the PSFs are truncated in practise $21 \times 21 \times 25$. \\
 
 As the algorithm at hand relies twice on convolutions, this operation is deemed to be the largest consumer of run time. A convolution is a filtering operation, that operates on and n-dimensional image $f$ and convolves it by a filter kernel $g$ of similar or less dimensionality. Assuming that $f$ and $g$ are three-dimensional pixel collections and that $g$ has dimensions $N_{x} \times N_{y} \times N_{z}$, a convolution for an output pixel at location $[x,y,z]$ is calculated as 
 
@@ -93,6 +102,8 @@ Here, $F[f]$ gives the Fourier Transform of $f$ into the frequency domain and $\
 \end{equation}
 
 Here, $I = I_{x} \cdot I_{y} \cdot I_{z}$ refers to the total number of pixels in image $f$. As the FFT is performed on non-complex data further simplifications can be applied to it's implementation which renders equation \ref{eq:fft_convol_complexity} to be an upper bound rather than an exact value as in equation \ref{eq:discrete_convol_complexity}. The library as the result of the discussion at hand interfaces to the \texttt{fftw} (\cite{FFTW05}) library which contains highly optimised FFT implementations performed on the Central Processing Unit (CPU). The CPU-based implementation of the multi-view deconvolution is based on listing \ref{new_implementation}.
+
+\clearpage
 
 \begin{lstlisting}[caption={Optimized CPU Implementation of Multi-View Deconvolution. All FFT are explicitely stated \texttt{fft} as well as the corresponding normalized inverse operations \texttt{ifft}. },label={lst:new_implementation}]
 stack_f32 psi = stack_f32(const);
