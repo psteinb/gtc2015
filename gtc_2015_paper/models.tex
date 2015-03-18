@@ -118,22 +118,29 @@ Figure \ref{fig:nvprof_batched_fft} illustrates possible advantages and disadvan
 
 \begin{lstlisting}[caption={Asynchronous Batched FFT on synthetic data performed on GPU in pseudo-code based on the \cufft{} syntax.},label={lst:batched_fft_gpu_async2plans}]
 stack_f32 synthetic_data[n_view];
+cudaEvent_t stream_events[n_view];
+fftwf_plan plans[2];
+cudaStream_t streams[2];
+float* d_buffer[2];
+// ... initialize 
 
-fftwf_plan plan = fftw_plan_dft_r2c(3,
-                                    synthetic_data[0].shape(),
-                                    synthetic_data[0].ptr(),
-                                    synthetic_data[0].ptr(),
-                                    FFTW_MEASURE);
 //start timing
-for ( v : n_view )
-  fftwf_execute_dft_r2c(plan, 
-                        synthetic_data[v].ptr(),
-                        synthetic_data[v].ptr());
+for ( v : n_view ){
+  cudaMemcpyAsync(synthetic_data[v] -> d_buffer[v \% 2],streams[v \% 2]);
+  cudaEventRecord(stream_events[v],streams[v \% 2]);
+  cudaStreamWaitEvent(streams[v \% 2],stream_events[v - 1]);
+  cufftExecR2C(plans[v \% 2], d_buffer[v \% 2]) // on stream d_buffer[v \% 2]
+  cudaMemcpyAsync(d_buffer[v \% 2] -> synthetic_data[v],streams[v \% 2]);
+}
+cudaDeviceSynchronize();
 //end timing
+
+//clean-up
 \end{lstlisting}
 
 
-What however becomes clear is that synchronous (figure \ref{fig:batched_fft_sync}) are not beneficial as data transfers to the \gpu{} are performed sequentially. Asynchronous transfers using the same number of streams as there are image stacks (figure \ref{fig:batched_fft_async}) are also not performant. But if the number of transfer streams correlates with the number of copy engines the \gpu{} offers, data transfers and computations can be overlaid to some extent and runtime benefits can be obtained (figure \ref{fig:batched_fft_async2plans}). Besides, the data transfer techniques depicted in figure \ref{fig:nvprof_batched_fft}, mapped memory usage (buffers are marked by \texttt{cudaHostRegister} and their device pointer is obtained through \texttt{cudaHostGetDevicePointer}) and managed unified memory (all data is allocated by \texttt{cudaMallocManaged}) by \cufft{}  was benchmarked. The results for ``managed'' memory usage are not shown here for time measurements did not correlated at all with the measurements obtained in \texttt{nvprof}. 
+What however becomes clear is that synchronous (figure \ref{fig:batched_fft_sync}) are not beneficial as data transfers to the \gpu{} are performed sequentially. Asynchronous transfers using the same number of streams as there are image stacks (figure \ref{fig:batched_fft_async}) are also not performant (mostly due to the lack of copy engines). But if the number of transfer streams correlates with the number of copy engines the \gpu{} offers, data transfers and computations can be overlaid to some higher extent and runtime benefits can be obtained (figure \ref{fig:batched_fft_async2plans}). Besides the ones just discussed, other host-device data transfer methods were benchmarked. 
+For example, mapped memory usage (buffers are marked by \texttt{cudaHostRegister} and their device pointer is obtained through \texttt{cudaHostGetDevicePointer}) and managed unified memory (all data is allocated by \texttt{cudaMallocManaged}) have been implemented. The results for ``managed'' memory usage are not shown here because time measurements did not correlated at all with the measurements obtained in \texttt{nvprof}. Before drawing wrong conclusions, the data is not discussed at all. 
 
 \begin{figure}[h]
   \centering

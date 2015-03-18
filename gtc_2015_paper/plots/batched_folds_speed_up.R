@@ -53,7 +53,7 @@ select_sizes <- function(mode_tag, cpu_data, gpu_data) {
   gpu_rows <- filter(gpu_data, mode == mode_tag)
   gpu_data_sizes <- levels(as.factor(gpu_rows$data_in_mb))
   selected_cpu_rows <- filter(cpu_data, data_in_mb %in% c(gpu_data_sizes) )
-  gpu_rows$speed_up <- as.numeric(gpu_rows$total_time_ms) / as.numeric(selected_cpu_rows$total_time_ms)
+  gpu_rows$speed_up <-  as.numeric(selected_cpu_rows$total_time_ms) / as.numeric(gpu_rows$total_time_ms)
   gpu_rows$cpu_total_time_ms <- as.numeric(selected_cpu_rows$total_time_ms)
   
   gpu_rows
@@ -62,18 +62,22 @@ select_sizes <- function(mode_tag, cpu_data, gpu_data) {
 
 k20_data <- filter(gpu_only, grepl("K20", dev_name))
 
-modes_to_loop <- c(levels(as.factor(gpu_only$mode)))
+modes_to_loop <- c(levels(as.factor(k20_data$mode)))
 new_gpu_data <- do.call("rbind", lapply(modes_to_loop, FUN = select_sizes, cpu_only, k20_data))
 
 
 other_data <- filter(gpu_only, !grepl("K20", dev_name))
+modes_to_loop <- c(levels(as.factor(other_data$mode)))
 new_gpu_data <- rbind(new_gpu_data,do.call("rbind", lapply(modes_to_loop, FUN = select_sizes, cpu_only, other_data)))
 
+new_gpu_data
 
-runtime_gpu <- ggplot(new_gpu_data, aes(x=data_in_mb, y=as.numeric(speed_up), color=as.factor(mode),linetype=as.factor(dev_name))) 
+cpu_name <- c(levels(as.factor(cpu_only$dev_name)))
+
+runtime_gpu <- ggplot(new_gpu_data, aes(x=data_in_mb, y=as.numeric(speed_up), color=as.factor(dev_name),linetype=as.factor(mode))) 
 runtime_gpu <- runtime_gpu + geom_line(size=1.5) + my_theme + scale_x_log10()
-runtime_gpu <- runtime_gpu + geom_hline(yintercept = 1, colour = 'blue', linetype = "dotted")
-runtime_gpu <- runtime_gpu + ylab(sprintf("speed-up over %s",c(cpu_only$dev_name)[0])) + xlab("input data / MB")#+ guides(color=guide_legend(nrow=2,byrow=TRUE)) #
+runtime_gpu <- runtime_gpu + geom_hline(yintercept = 1, colour = 'blue', linetype = "dotted") + ylim(0,1.2*max(new_gpu_data$speed_up))
+runtime_gpu <- runtime_gpu + ylab(sprintf("speed-up over %s",cpu_name)) + xlab("input data / MB")#+ guides(color=guide_legend(nrow=2,byrow=TRUE)) #
 
 ggsave("batched_folds_gpu_speed_up.png",runtime_gpu)
 ggsave("batched_folds_gpu_speed_up.svg",runtime_gpu)

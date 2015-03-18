@@ -30,7 +30,7 @@ my_theme <-  theme_bw() + theme(axis.title.x = element_text(size=20),
                                 axis.text.y = element_text(size=16)) + theme(legend.title = element_text(size=22, face="bold")) + theme(legend.text = element_text( size = 16)) + theme(legend.title=element_blank()) + theme(legend.position="top") + theme(axis.text.x  = element_text()) + theme(legend.key = element_rect(colour = 'white', fill = 'white', size = 0., linetype='dashed')) + theme(legend.key.width = unit(1.5, "cm"))
 
 cpu_only <- filter(all_data, grepl("cpu",dev_type) , n_devices!=1, grepl("v3",dev_name))
-cpu_only$tx_type <- "cpu"
+cpu_only$tx_type <- "sync"
 
 all_data <- mutate(all_data, tx_type = gsub('([a-z]+),.*','\\1',comment))
 
@@ -41,7 +41,7 @@ data_to_plot <- cpu_only
 data_to_plot <- rbind(data_to_plot, gpu_only)
 
 
-runtime_gpu <- ggplot(data_to_plot, aes(x=data_in_mb, y=as.numeric(total_time_ms), color=tx_type )) 
+runtime_gpu <- ggplot(filter(data_to_plot, !grepl("2090", dev_name)), aes(x=data_in_mb, y=as.numeric(total_time_ms), color=tx_type )) 
 runtime_gpu <- runtime_gpu + geom_line(aes(linetype=as.factor(dev_name)),size=1.5) + my_theme + scale_linetype_manual(values=c(5,3,1,8,10))
 runtime_gpu <- runtime_gpu + ylab("runtime / ms") + xlab("input data / MB")+ guides(linetype=guide_legend(nrow=2)) + xlim(0,1024) + ylim(100,.9*max(c(data_to_plot$total_time_ms))) + scale_y_log10()
 
@@ -51,10 +51,10 @@ ggsave("batched_all_cgpu_runtime.pdf",runtime_gpu)
 
 data_to_plot <- rbind(filter(gpu_only, grepl("K20", dev_name) | grepl("Titan", dev_name) ),filter(cpu_only, n_devices<40))
 
-runtime_gpu <- ggplot(data_to_plot, aes(x=data_in_mb, y=as.numeric(total_time_ms), linetype=as.factor(dev_name), color=tx_type )) 
-runtime_gpu <- runtime_gpu + geom_line(size=1.5) + my_theme  +scale_color_brewer(palette="Set1") #+  scale_color_manual(values=c("red","blue","brown","grey"))
+runtime_gpu <- ggplot(data_to_plot, aes(x=data_in_mb, y=as.numeric(total_time_ms), color=as.factor(dev_name), linetype=tx_type )) 
+runtime_gpu <- runtime_gpu + geom_line(size=1.5) + my_theme  +scale_color_brewer(palette="Set1") 
 runtime_gpu <- runtime_gpu + scale_linetype_manual(values=c("solid","dashed","dotted"))
-runtime_gpu <- runtime_gpu + guides(color=guide_legend(ncol=2)) + theme(legend.position="top")
+runtime_gpu <- runtime_gpu + guides(color=guide_legend(ncol=1)) + theme(legend.position="top")
 runtime_gpu <- runtime_gpu + ylab("runtime / ms") + xlab("input data / MB")+ guides(linetype=guide_legend(nrow=1)) + xlim(0,1024) + ylim(100,.9*max(c(data_to_plot$total_time_ms))) + scale_y_log10()
 
 ggsave("batched_cgpu_runtime.png",runtime_gpu)
@@ -62,23 +62,36 @@ ggsave("batched_cgpu_runtime.svg",runtime_gpu)
 ggsave("batched_cgpu_runtime.pdf",runtime_gpu)
 
 #pick only entries that are both in cpu and gpu
-data_to_plot <- gpu_only
-best_gpu <- filter(data_to_plot,tx_type == "async2plans")
-gpu_data_sizes <- levels(as.factor(filter(best_gpu, grepl("K20",dev_name) )$data_in_mb))
-gpu_names <- c(levels(as.factor(best_gpu$dev_name)))
-best_gpu <- filter(best_gpu, data_in_mb %in% c(gpu_data_sizes) )
+select_sizes <- function(tag, cpu_data, gpu_data) {
 
-cpu_only_reduced <- filter(cpu_only, data_in_mb %in% c(gpu_data_sizes) , n_devices<40)
-sprintf("original cpu_only_reduced %i,found %i gpu names, gpu_data_sizes %i",nrow(cpu_only_reduced),length(gpu_names),length(gpu_data_sizes))
-cpu_only_reduced <- do.call(rbind, replicate(length(gpu_names), cpu_only_reduced, simplify=FALSE))
+  gpu_rows <- filter(gpu_data, shape == tag)
+  gpu_data_sizes <- levels(as.factor(gpu_rows$data_in_mb))
+  selected_cpu_rows <- filter(cpu_data, data_in_mb %in% c(gpu_data_sizes) )
+  gpu_rows$speed_up <-  as.numeric(selected_cpu_rows$total_time_ms) / as.numeric(gpu_rows$total_time_ms)
+  gpu_rows$cpu_total_time_ms <- as.numeric(selected_cpu_rows$total_time_ms)
+  
+  gpu_rows
+  
+}
 
 
-## best_gpu should match cpu_only_reduced now
-sprintf("best_gpu should match cpu_only_reduced now %i %i",nrow(best_gpu),nrow(cpu_only_reduced))
-head(cpu_only_reduced)
+## data_to_plot <- gpu_only
+## best_gpu <- filter(data_to_plot,tx_type == "async2plans")
+## gpu_data_sizes <- levels(as.factor(filter(best_gpu, grepl("K20",dev_name) )$data_in_mb))
+## gpu_names <- c(levels(as.factor(best_gpu$dev_name)))
+## best_gpu <- filter(best_gpu, data_in_mb %in% c(gpu_data_sizes) )
 
-best_gpu$cpu_time_ms <- as.numeric(cpu_only_reduced$total_time_ms)
-best_gpu$speed_up_over_best_cpu <- best_gpu$cpu_time_ms / best_gpu$total_time_ms
+## cpu_only_reduced <- filter(cpu_only, data_in_mb %in% c(gpu_data_sizes) , n_devices<40)
+## sprintf("original cpu_only_reduced %i,found %i gpu names, gpu_data_sizes %i",nrow(cpu_only_reduced),length(gpu_names),length(gpu_data_sizes))
+## cpu_only_reduced <- do.call(rbind, replicate(length(gpu_names), cpu_only_reduced, simplify=FALSE))
+
+
+## ## best_gpu should match cpu_only_reduced now
+## sprintf("best_gpu should match cpu_only_reduced now %i %i",nrow(best_gpu),nrow(cpu_only_reduced))
+## head(cpu_only_reduced)
+
+## best_gpu$cpu_time_ms <- as.numeric(cpu_only_reduced$total_time_ms)
+## best_gpu$speed_up_over_best_cpu <- best_gpu$cpu_time_ms / best_gpu$total_time_ms
 
 
 speed_up_gpu <- ggplot(best_gpu, aes(x=data_in_mb, y=as.numeric(speed_up_over_best_cpu), linetype=as.factor(dev_name) )) 
