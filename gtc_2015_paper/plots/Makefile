@@ -11,7 +11,8 @@ dev :
 	./single_fft_runtime.R ../data/*_[cg]pu.data
 	./single_fft_api_fraction.R ../data/*_gpu_prof.data
 	./batched_fft_runtime.R ../data/*many_fft.data
-	./batched_folds_runtime.R ../data/islay*many_folds.data
+	#./batched_folds_runtime.R ../data/islay*many_folds.data
+	./batched_folds_speed_up.R ../data/islay*many_folds.data ../data/pigino-pc-4_gpu*folds.data
 
 %tex : %Rnw
 	./knit $<
