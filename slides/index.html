@@ -45,8 +45,8 @@
 	  <p><br></p>
 	  <p>
 	  <a href="mailto:steinbach@mpi-cbg.de">Peter Steinbach</a><br>
-	  San Jose, March 20, 2015<br>
-	  <a href="http://www.mpi-cbg.de">Max Planck Institute of Molecular Cell Biology and Genetics</a><br>
+	  GTC 2015, San Jose (CA, USA), March 20, 2015<br>
+	  <a href="http://www.mpi-cbg.de">Max Planck Institute of Molecular Cell Biology and Genetics</a><br>Dresden, Germany
 	  </p>        
 	</section>
 	
@@ -199,8 +199,29 @@ for( i : n_iterations){
 	    <ul >
 	      <li>data type conversion from 16bit to 32bit</li>
 	      <li>time domain convolutions not feasible due to kernel size (79x121x101)</li>
+	      <li>currently implemented in jave, GPU used for FFT (only 2x speed-up)</li>
+		      
 	    </ul>
 
+	  </section>
+
+
+	  <section>
+	    <h1>A Native Open-Source Library</h1>
+	    <p >
+	      <center>
+		<a style="font-size: 2em;" href="https://github.com/psteinb/libmultiviewnative">github.com/psteinb/libmultiviewnative</a>
+	      </center>
+		<br /><br />
+	    </p>
+	    <div style="width: 60%;margin-left: 15%;margin-right: 15%;"> 
+	      <ul style="font-size: 1.5em;">
+		<li>implement multi-view deconvolution for fixed 3D image stacks</li>
+		<li>integration into java library</li>
+		<li>be cross platform</li>
+		<li>be fast</li>
+	      </ul>
+	      </div>
 	  </section>
 	  
 	</section>
@@ -425,12 +446,14 @@ cudaDeviceSynchronize();
 	<section>
 	  <section>
 	    <h1>Summary</h1>
+	    <!-- <p style="font-size: 1.4em; line-height: 1.25em;"> -->
 	    <ul>
 	      <li class="fragment" style="font-size: 140%">big data is hard, especially on GPUs</li>
 	      <li class="fragment" style="font-size: 140%">asynchronous execution helps <br />(does not make PCIe bus faster)</li>
 	      <li class="fragment" style="font-size: 140%">Waiting for Pascal!</li>
 	    </ul>
-	    <p style="font-size: 130%" class="fragment">
+	    <!-- </p> -->
+	    <p style="font-size: 1.3em" class="fragment">
 	      <br />
 	    For details, come to:<br>
 	    <a href="https://github.com/psteinb/gtc2015">github.com/psteinb/gtc2015</a> 
