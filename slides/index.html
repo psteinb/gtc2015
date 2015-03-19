@@ -51,36 +51,37 @@
 	</section>
 	
 	<section>
-	  <h2>Disclaimer</h2>
-	  <p style="text-align: left;">This work is licensed under a<br> <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0<br> International License</a>.</p>
-	  <div style="position: absolute; top: 20%; right: 10%; max-width: 80%;">
-	    <a rel="license" href="http://creativecommons.org/licenses/by/4.0/" target="_blank"><img width="176" alt="Creative Commons License" src="local/cc-by.png" /></a>
+	  <h1>Disclaimer</h1>
+	  <p style="text-align: left;max-width: 60%;margin-left: 5%;float: left;font-size: 1.4em">This presentation and affiliated preprint is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</p>
+	  <div style="max-width: 40%;margin-right: 5%;margin-top: 1%;float: right">
+	    <center>
+	      <a rel="license" href="http://creativecommons.org/licenses/by/4.0/" target="_blank"><img width="200" alt="Creative Commons License" src="local/cc-by.png" /></a><br />CC-BY 4.0 
+	      </center>
 	  </div>
 
-	  <p style="text-align: left;"><br>
-	    All material contained in the slides are linked to their source if not produced by the author. If you find intellectual property is not attributed to your satisfaction, feel free to contact <a href="mailto:steinbach@mpi-cbg.de">me</a>.
+	  <p style="font-size: 1.1em;text-align: left;margin-top: 15%;margin-left: 10%;margin-right: 10%"><br>
+	    All material contained in the slides are linked to their source if not produced by the author. If you find intellectual property is not attributed to your satisfaction, feel free to contact <a href="mailto:steinbac@mpi-cbg.de">me</a> or report a bug report to <a target="_blank" href="https://github.com/psteinb/gtc2015">github.com/psteinb/gtc2015</a>.
 	  </p>
 	</section>
 
-	<section data-background="local/1024px-Old_book_basking_ridge-historical-society.jpg">
-	  <p>
-	  For question, remarks or details on any of the following, consult the github repository :
-	    <center>
-	      <a target="_blank">https://github.com/psteinb/gtc2015</a>
-	    </center>
-	  As time is short for the presentation, you can find all the details in a preprint available from:
-	    <center>
-	      <a target="_blank">http://idisk.mpi-cbg.de/~steinbac/gtc2015/lmvn.pdf</a>
-	    </center>
+	<section data-background="local/books_to_the_right_small.jpg">
+	  <p style="margin-top: 10%;width: 50%;font-size: 1.3em">
+	  For question, remarks or details on this presentation, consult the github repository:<br />
+	  <a target="_blank" href="https://github.com/psteinb/gtc2015">github.com/psteinb/gtc2015</a><br /><br />
+	    
+	  More details in a preprint:<br />
+	  <a target="_blank" href="http://idisk.mpi-cbg.de/~steinbac/gtc2015/lmvn.pdf">idisk.mpi-cbg.de/~steinbac/gtc2015/lmvn.pdf</a>
 	  </p>
 	</section>
 
 	<section>
 	  <h1>Outline</h1>
-            <ol style="font-size: 120%;">                                                                                                      
+	  <p style="width: 80%;">
+            <ol style="font-size: 1.6em;">                                                                                                      
               <li>SPIM and the biological data deluge</li>                                                                                                                            <li>Multi-View Deconvolution</li>
               <li>From Model Systems to a Library</li>
             </ol>
+	  </p>
 	</section>
 
 	<section>
@@ -90,14 +91,14 @@
 
 	  <section>
 	    <h2>Selective Plane Illumination Microscopy</h2>
-	    <a rel="SPIM" href="https://en.wikipedia.org/wiki/Light_sheet_fluorescence_microscopy" target="_blank"><img width="1024" src="local/1280px-Spim_prinziple_en.svg.png" /></a>
+	    <a rel="SPIM" href="https://en.wikipedia.org/wiki/Light_sheet_fluorescence_microscopy" target="_blank"><img width="1600" src="local/1280px-Spim_prinziple_en.svg.png" /></a>
 			
 	  </section>
 
 	  <section>
 	    <h2>Live 3D Organism Development</h2>
 
-	      <video poster="video/Drosophila_Embryogenesis_beads_removed.png" controls>
+	      <video width="1200" poster="video/Drosophila_Embryogenesis_beads_removed.png" controls>
 		<source src="video/Drosophila_Embryogenesis_beads_removed.webm" type='video/webm; codecs="vp8.0, vorbis"'>
 		  <source src="video/Drosophila_Embryogenesis_beads_removed.mp4" type='video/mp4'>
 		    <p>Movie does not work! Sorry!</p>
@@ -107,9 +108,9 @@
 
 	  <section data-background="local/pile_of_floppy_disks.jpg">
 	    <div style="background-color: rgba(255,255,255,.7); ">
-	    <h2 style="color: black;">The Deluge</h2>
+	    <h1 style="color: black;">The Deluge</h1>
 
-	     <table style="color: black; ">                                                                                              
+	     <table style="color: black; font-size: 1.5em;">                                                                                              
                   <thead>                                                                                                        
                     <tr>                                                                                                         
                       <th></th>  
@@ -140,14 +141,18 @@
                   </tr> 
                   </tbody>
               </table>
-	     <p>
-	       <ul style="color: black;">
+	     <div style="width: 60%;margin-left: 20%;margin-right: 20%;">
+	       <p >
+	       <br /><br />
+	       <ul style="color: black;font-size: 1.2em;">
 		 <li>16-bit encoding</li>
 		 <li>multiple angles (3-12)</li>
 		 <li>sometimes multiple channels (different dyes)</li>
-		 <li>sometimes multiple timepoints (observe specimen over hours/days)</li>
+		 <li>sometimes multiple timepoints <br /> (observe specimen over hours/days)</li>
 	       </ul>
 	     </p>
+	       </div> 
+	     
 	    </div> 
 	  </section>
 
@@ -160,13 +165,13 @@
 	  </section>
 
 	  <section>
-	    <a href="http://www.nature.com/nmeth/journal/v11/n6/full/nmeth.2929.html"><h2>“Efficient Bayesian-based Multiview Deconvolution”</h2></a>
-	    <p> <br><br>S. Preibisch, F. Amat, E. Stamataki, M. Sarov, R.H. Singer, E. Myers and P. Tomancak <br><br>Nature Methods (2014), 11(6):645-648.</p>
+	    <a href="http://www.nature.com/nmeth/journal/v11/n6/full/nmeth.2929.html"><h1>“Efficient Bayesian-based Multiview Deconvolution”</h1></a>
+	    <h2> <br><br>S. Preibisch, F. Amat, E. Stamataki, M. Sarov, R.H. Singer, E. Myers and P. Tomancak <br><br>Nature Methods (2014), 11(6):645-648.</h2>
 	  </section>
 
 	  <section>
 	    <a href="http://www.nature.com/nmeth/journal/v11/n6/full/nmeth.2929.html"><h2>Considerable Contrast Enhancements</h2></a>
-	    <video poster="video/Celegans_lateral_one_view_versus_deconvolved.png" controls>
+	    <video width="1200" poster="video/Celegans_lateral_one_view_versus_deconvolved.png" controls>
 	      <source src="video/Celegans_lateral_one_view_versus_deconvolved.webm" type='video/webm; codecs="vp8.0, vorbis"'>
 		<source src="video/Celegans_lateral_one_view_versus_deconvolved.mp4" type='video/mp4'>
 		  <p>Movie does not work! Sorry!</p>
@@ -175,8 +180,8 @@
 
 
 	  <section>
-	    <h2>Algorithm</h2>
-	    <pre><code>
+	    <h1>Algorithm</h1>
+	    <pre><code style="font-size: 1.7em;line-height: 1.1em;max-height: 600px;">
 stack_f32 running = stack_f32(const);
 stack_f32 view[n_view], kernel1[n_view],     //loaded from disk
 	  kernel2[n_view], weights[n_view];  //loaded from disk
@@ -288,12 +293,12 @@ for ( v : n_view ){
 	    <center>
 	      <h2>Synchronous Transfers!</h2>
 	      <figure>
-		<img width="900" src="figures/bench_gpu_many_nd_fft_sync_narrow.png" alt="synchronous transfers" />
+		<img width="1200" src="figures/bench_gpu_many_nd_fft_sync_narrow.png" alt="synchronous transfers" />
 	      </figure>
 	      <p><br /><br /></p>
 	      <h2 class="fragment">Asynchronous Transfers?</h2>
 	      <figure class="fragment">
-		<img width="900" src="figures/bench_gpu_many_nd_fft_async2plans_narrow.png" alt="asynchronous transfers" />
+		<img width="1200" src="figures/bench_gpu_many_nd_fft_async2plans_narrow.png" alt="asynchronous transfers" />
 	      </figure>
 	      
 	    </center>
@@ -461,8 +466,7 @@ cudaDeviceSynchronize();
       progress: true,
       history: true,
       center: true,
-
-      
+      slideNumber: true,
       // The "normal" size of the presentation, aspect ratio will be preserved
       // when the presentation is scaled to fit different resolutions. Can be
       // specified using percentage units.
