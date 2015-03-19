@@ -54,6 +54,13 @@ For the measurements at hand, a Dell T7810 work station was used equipped with t
 \section{Summary}
 \label{sec:summ}
 
+Multiview Deconvolution is a central technique for contrast enhancements of multi-dimensional SPIM data. As the data is of unprecedented size, porting suche an algorithm onto massively parallel hardware (\gpu{}s) requires a constant struggle against data transfer bottlenecks. As such, the PCI Express is the everlasting hurdle to overcome by asynchronous orchestration of memory transfers to the \gpu{} and computing calls. In this study, performance considerations for model systems very similar to the environment of \lmvn{} lead to an improvement of the actual algorithm and a speed-up of $7x$ compared to a state-of-the-art multi-\cpu{} implementation.\newline
+
+
+\section{Acknowledgements}
+\label{sec:ackn}
+
+I'd like to thank Stephan Preibisch (Janelia Farm) and Pavel Tomanck (MPI CBG) for providing me this challenging project that lead me to present at an internationally renowned conference. I'd also like to thank Stephan Janosch for providing test data sets and the CUDA Center of Excellence for providing the Nvidia Tesla K20c used for the experiments above as well as valuable feedback during this project. 
 
 \section{References}
 \bibliographystyle{ieeetr}
