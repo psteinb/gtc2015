@@ -34,7 +34,11 @@ cpu_only$tx_type <- "sync"
 
 all_data <- mutate(all_data, tx_type = gsub('([a-z0-9]+),.*','\\1',comment))
 
-gpu_only <- filter(all_data, grepl("gpu",dev_type), grepl("OK",comment), grepl("inplace",comment), "mangd" != tx_type, tx_type != "async")
+gpu_only <- filter(all_data, grepl("gpu",dev_type), ## grepl("OK",comment),
+                   grepl("inplace",comment),
+                   "mangd" != tx_type,
+                   "mapped" != tx_type,
+                   tx_type != "async")
 gpu_only$dev_name[gpu_only$dev_name == 'GeForce_GTX_TITAN_Black'] <- 'Titan_Black'
 
 data_to_plot <- cpu_only
