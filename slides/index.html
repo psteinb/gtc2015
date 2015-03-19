@@ -64,9 +64,13 @@
 
 	<section data-background="local/1024px-Old_book_basking_ridge-historical-society.jpg">
 	  <p>
-	  For details on any of the following, consult the corresponding arxiv preprint :
+	  For question, remarks or details on any of the following, consult the github repository :
 	    <center>
-	      <a target="_blank">arxiv.org/abs/1503.xxxx</a>
+	      <a target="_blank">https://github.com/psteinb/gtc2015</a>
+	    </center>
+	  As time is short for the presentation, you can find all the details in a preprint available from:
+	    <center>
+	      <a target="_blank">http://idisk.mpi-cbg.de/~steinbac/gtc2015/lmvn.pdf</a>
 	    </center>
 	  </p>
 	</section>
@@ -108,38 +112,40 @@
 	     <table style="color: black; ">                                                                                              
                   <thead>                                                                                                        
                     <tr>                                                                                                         
-                      <th></th>                                                                                           
-                      <th style="text-align: right">color depth<br>(bit)</th>                                                       
+                      <th></th>  
                       <th style="text-align: right">stack shape</th>
+		      <th style="text-align: right">views</th>
                       <th style="text-align: right">data volume<br>(GB)</th>
                     </tr>                                                                                                        
                   </thead>
 		  <tbody>
 		    <tr>                                                                                                         
                       <td>custom</td>
-                      <td style="text-align: right">16</td>
                       <td style="text-align: right">928x390x390</td>
+                      <td style="text-align: right">3</td>
                       <td style="text-align: right">.8</td>
                   </tr>
 		  <tr>                                                                                                         
                       <td>custom</td>
-                      <td style="text-align: right">16</td>
                       <td style="text-align: right">1670x1070x345</td>
+                      <td style="text-align: right">4</td>
                       <td style="text-align: right">4.7</td>
                   </tr>
 		  <tr>                                                                                                         
                     <td>propriatary</td>
-                    <td style="text-align: right">16</td>
+                    
                     <td style="text-align: right">1920x1920x320</td>
+                    <td style="text-align: right">5</td>
                     <td style="text-align: right">5.6</td>
                   </tr> 
                   </tbody>
               </table>
 	     <p>
 	       <ul style="color: black;">
-		 <li>multiple angles (3-12), required by method</li>
-		 <li>multiple channels (different dyes)</li>
-		 <li>multiple timepoints (observe specimen over hours/days)</li>
+		 <li>16-bit encoding</li>
+		 <li>multiple angles (3-12)</li>
+		 <li>sometimes multiple channels (different dyes)</li>
+		 <li>sometimes multiple timepoints (observe specimen over hours/days)</li>
 	       </ul>
 	     </p>
 	    </div> 
@@ -161,7 +167,7 @@
 	  <section>
 	    <a href="http://www.nature.com/nmeth/journal/v11/n6/full/nmeth.2929.html"><h2>Considerable Contrast Enhancements</h2></a>
 	    <video poster="video/Celegans_lateral_one_view_versus_deconvolved.png" controls>
-	      <source src="video/Celegans_lateral_one_view_versus_deconvolved.mp4" type='video/webm; codecs="vp8.0, vorbis"'>
+	      <source src="video/Celegans_lateral_one_view_versus_deconvolved.webm" type='video/webm; codecs="vp8.0, vorbis"'>
 		<source src="video/Celegans_lateral_one_view_versus_deconvolved.mp4" type='video/mp4'>
 		  <p>Movie does not work! Sorry!</p>
 	    </video>
@@ -200,178 +206,214 @@ for( i : n_iterations){
 	  </section>
 
 	  <section>
-	    <h2>3D FFTs</h2>
-	    <div style="max-width: 40%; text-align: left;float: left; margin: 1% auto;">
-	      <pre style="width: 100%;"><code>
+	    <h1>3D FFTs</h1>
+	    <div style="max-width: 30%; text-align: center;float: left;margin-left: 7%; margin-top: 7%;">
+	      <pre style="width: 100%;font-size: 110%;"><code>
 stack_f32 temp(random);
 
 for( i : n_iterations){
     fft_3d_r2c(temp);
 }
 	    </code></pre>
+	      <p style="margin-top: 10%;">
+	      <ul >
+		<li style="font-size: 130%;">CUDA 6.5</li>
+		<li style="font-size: 130%;">gcc 4.8.1</li>
+		<li style="font-size: 130%;">machine details</li>
+	      </ul></p>
+	    </div> 
+
+	    <div style="max-width: 70%; text-align: right;float: right;margin-right: 5%;">
+	      <figure>
+		<img width="900" src="figures/synced_gpu_runtime.svg" alt="gpu_vs_cpu" />
+	      </figure>
+	    </div> 
+	  </section>
+
+	  <section>
+	    <h1>3D FFTs: CUDA API</h1>
+	    <div style="max-width: 65%; text-align: left;float: left;margin-left: 5%;margin-top: 2%; ">
+	      <figure>
+		<img width="900" src="figures/synced_gpu_api_fraction.svg" alt="gpu_vs_cpu CUDA API" />
+	      </figure>
+	    </div> 
+	    
+	    <div style="max-width: 35%; text-align: right;float: right; margin-right: 5%;margin-top: 10%;">
 	      <ul>
-		<li>CUDA 6.5</li>
-		<li>gcc 4.8.1</li>
-		<li>machine details</li>
+		<li style="font-size: 170%;">memory/transfer bound!</li>
+		<li style="font-size: 170%;">use async transfers?</li>
+		<li style="font-size: 170%;">use batched transforms?</li>
 	      </ul>
 	    </div> 
+	     
+	  </section>
 
-	    <div style="max-width: 60%; text-align: right;float: right;">
+	  <section>
+	    <h1>Batched Transforms</h1>
+	    <div style="max-width: 50%; text-align: left;float: left;margin-left: 3%; margin-right: 0;height: 100% ">
+	      <pre ><code style="font-size: 1.6em;line-height: 1.1em;max-height: 900px; width: 110%;">
+stack_f32 synthetic_data[n_view];
+
+plan_t 
+plan = plan_dft_r2c(3,
+	  synthetic_data[0].shape(0),
+          synthetic_data[0].shape(1),
+          synthetic_data[0].shape(2),
+          FFTW_MEASURE);
+
+//start timing
+float* device_ptr;
+for ( v : n_view ){
+  cudaMemcpy(device_ptr,
+             synthetic_data[v].ptr());
+  execute_r2c(plan, 
+	device_ptr,
+	device_ptr);
+  cudaMemcpy(synthetic_data[v].ptr(),
+	     device_ptr);
+  }
+//end timing
+	      </code></pre>
+	    </div> 
+	    
+	    <div style="max-width: 50%; text-align: right;float: right; ">
 	      <figure>
-		<img src="figures/synced_gpu_runtime.svg" alt="gpu_vs_cpu" />
+		<img width="900" src="figures/batched_cgpu_runtime_sync.png" alt="gpu_vs_cpu CUDA API" />
 	      </figure>
 	    </div> 
 	  </section>
 
+
 	  <section>
-	    <h2>3D FFTs: CUDA API</h2>
-	    <div style="max-width: 60%; text-align: left;float: left; margin: 1% auto;">
+	    <center>
+	      <h2>Synchronous Transfers!</h2>
 	      <figure>
-		<img src="figures/synced_gpu_api_fraction.svg" alt="gpu_vs_cpu CUDA API" />
+		<img width="900" src="figures/bench_gpu_many_nd_fft_sync_narrow.png" alt="synchronous transfers" />
 	      </figure>
+	      <p><br /><br /></p>
+	      <h2 class="fragment">Asynchronous Transfers?</h2>
+	      <figure class="fragment">
+		<img width="900" src="figures/bench_gpu_many_nd_fft_async2plans_narrow.png" alt="asynchronous transfers" />
+	      </figure>
+	      
+	    </center>
+	  </section>
+
+
+	  <section>
+	    <h1>Batched Transforms, continued</h1>
+	    <div style="max-width: 60%; text-align: left;float: left;margin-left: 0%; margin-right: 0;height: 100% ">
+	      <pre ><code style="font-size: 1.45em;line-height: 1.1em;max-height: 900px; width: 120%;" data-trim >
+stack_f32 synthetic_data[n_view];
+cudaEvent_t stream_events[n_view];
+fftwf_plan plans[2];
+cudaStream_t streams[2];
+float* d_buffer[2];
+// ... initialize 
+
+//start timing
+for ( v : n_view ){
+  cudaMemcpyAsync(d_buffer[v % 2],
+		  synthetic_data[v],
+		  streams[v % 2]);
+  cudaEventRecord(stream_events[v],streams[v % 2]);
+  cudaStreamWaitEvent(streams[v % 2],
+	              stream_events[v - 1]);
+// on stream streams[v % 2]
+  cufftExecR2C(plans[v % 2], 
+	       d_buffer[v % 2]) 
+  cudaMemcpyAsync(synthetic_data[v],
+		  d_buffer[v % 2],
+		  streams[v % 2]);
+}
+cudaDeviceSynchronize();
+//end timing
+
+//clean-up
+	    </code></pre>
 	    </div> 
 	    
-	    <div style="max-width: 40%; text-align: right;float: right; margin: 1% auto;">
+	    <div style="max-width: 40%; text-align: right;float: right; ">
+	      <figure>
+		<img width="800" src="figures/batched_gpu_speed_up.png" alt="gpu_vs_cpu CUDA API" />
+	      </figure>
+	    </div> 
+	  </section>
+
+
+	  <section>
+	    <h1>Going For Convolutions!</h1>
+<div style="max-width: 60%; text-align: left;float: left;margin-left: 3%; margin-right: 0;height: 100% ">
+	      <pre ><code style="font-size: 1.2em;line-height: 1.1em;max-height: 900px; width: 120%;" data-trim >
+// ... initialize 
+inplace_forward_transform(kernel_data[:]);
+
+//start timing
+cudaMemcpyAsync(d_buffer[kernel],
+	kernel_data[0],
+	streams[kernel]);
+  
+for ( v : n_view ){
+  cudaMemcpyAsync(d_buffer[image],
+	synthetic_data[v],streams[image]);
+
+// on stream streams[image]
+  cufftExecR2C(plans[image], 
+	d_buffer[image])
+  
+  cudaDeviceSynchronize();
+  multiply<<< ... , 0 , streams[image]>>>(
+	d_buffer[image],
+	d_buffer[kernel],...);
+  cudaMemcpyAsync(d_buffer[kernel],kernel_data[v+1],
+	streams[kernel]);
+  
+// on stream streams[image]
+  cufftExecC2R(plans[image], 
+	d_buffer[image]) 
+  cudaMemcpyAsync(synthetic_data[v],
+	d_buffer[image] ,
+	streams[image]);
+}
+cudaDeviceSynchronize();
+//end timing
+//clean-up
+	    </code></pre>
+	    </div> 
+	    
+	    <div style="max-width: 40%; text-align: right;float: right; ">
+	      <figure>
+		<img width="800" src="figures/batched_folds_gpu_speed_up.png" alt="speed-up image kernel convolutions" />
+	      </figure>
+	    </div> 
+	     
+	  </section>
+
+	  <section>
+	    <h1>Putting it all together</h1>
+	      <pre ><code style="font-size: 4em;line-height: 1.1em;word-wrap: break-word;" data-trim >
+		  //CODE DOESN'T FIT ON THIS SLIDE ANYMORE!
+		</code></pre >
+	      
+	  </section>
+
+	  <section>
+	    <h1>libmultiviewnative</h1>
+	    	    
+	    <div style="max-width: 60%; text-align: right;float: left; ">
+	      <figure>
+		<img width="900" src="figures/deconvolve_synthetic_gpu_speed_up.png" alt="speed-up in final version from libmultiviewnative" />
+	      </figure>
+	    </div> 
+
+	    <div style=" max-width: 40%; text-align: left;float: right; margin-left: 3%; margin-right: 5%;margin-top: 15% ">
 	      <ul>
-		<li>As expected, this is memory/transfer bound</li>
-		<li>use async transfers</li>
-		<li>use batched transforms</li>
+		<li style="font-size: 140%">open source library <a href="https://github.com/psteinb/libmultiviewnative">github.com/psteinb/libmultiviewnative</a><br></li><p><br /></p>
+		<li style="font-size: 140%">further details: <a href="https://github.com/psteinb/gtc2015">github.com/psteinb/gtc2015</a></li>
 	      </ul>
 	    </div> 
-	     
+
 	  </section>
-
-	  <section>
-	    <h2>Convolutions</h2>
-	    <div style="max-width: 50%; text-align: left;float: left; margin: 1% auto;">
-	      <pre style="width: 100%;"><code>
-stack_f32 temp(random);
-stack_f32 kernels[n_views];
-float* d_kernel;
-
-batched_fft_r2c(kernels);
-cudaMemCpyAsync(kernels[0],
-                d_kernel);
-
-for( i : n_views){
-    cudaMemCpyAsync(kernels[i+1],
-                    d_kernel);
-    convolve(temp,kernels[i]);
-}
-	    </code></pre>
-	    </div> 
-	    
-	    <div style="max-width: 50%; text-align: right;float: right; margin: 1% auto;">
-	      <figure>
-		<img alt="Plot is still to be created" />
-	      </figure>
-	    </div> 
-
-	     
-	  </section>
-
-	  <section>
-	    <h2>What about Managed Memory?</h2>
-	    
-<pre style="align: center;"><code data-trim>
-stack_f32 temp;
-cudaMallocManaged(temp.data());
-fill_with_random(temp.data());
-
-//assume: managed_stack_f32 uses cudaMallocManaged for allocation
-managed_stack_f32 kernels[n_views]; 
-batched_fft_r2c(kernels);
-
-for( i : n_views){
-    convolve(temp,kernels[i]);
-}
-	    </code></pre>
-	    
-	    <div style="max-width: 48%; text-align: left;float: left; margin: 1% auto;">
-	      <ul style="color: green;">
-		<li>don't worry about transfers anymore</li>
-		<li>less code</li>
-		<li>better maintenance</li>
-	      </ul>
-	    </div> 
-	    
-	    <div style="max-width: 48%; text-align: right;float: right; margin: 1% auto;">
-	      <ul style="color: orange;">
-		<li>large input data</li>
-		<li>Beware GPU memory oversubscription!</li>
-		<li>Nvidia Pascal will support GPU memory paging</li>
-	      </ul>
-	    </div> 
-	  </section>
-
-
-
-	  <section>
-	    <h2>2 Convolutions</h2>
-	    <div style="max-width: 50%; text-align: left;float: left; margin: 0 auto;">
-	      <pre style="width: 100%;font-size: 45%;"><code data-trim>
-stack_f32 temp(random);
-stack_f32 kernel1[n_views];
-stack_f32 kernel2[n_views];
-float* d_kernel1, d_kernel2;
-
-batched_fft_r2c(kernels);
-cudaMemCpyAsync(kernel1[0],
-                d_kernel1);
-
-for( i : n_views){
-    cudaMemCpyAsync(kernel1[i+1],
-                    d_kernel1);
-    convolve(temp,d_kernel1);
-
-    cudaMemCpyAsync(kernel2[i+1],
-                    d_kernel2);
-    convolve(temp,d_kernel2);
-}
-	    </code></pre>
-	    </div> 
-	    
-	    <div style="max-width: 50%; text-align: right;float: right; margin: 1% auto;">
-	      <figure>
-		<img alt="Plot is still to be created" />
-	      </figure>
-	    </div> 
-
-	     
-	  </section>
-
-	  <section>
-	    <h2>Convolutions, streams and events</h2>
-	    <div style="max-width: 50%; text-align: left;float: left; margin: 0 auto;">
-	      <pre style="width: 100%;font-size: 45%;"><code data-trim>
-stack_f32 temp(random);
-stack_f32 kernel1[n_views];
-stack_f32 kernel2[n_views];
-float* d_kernel1, d_kernel2;
-
-batched_fft_r2c(kernels);
-//code to be pasted here
-	    </code></pre>
-	    </div> 
-	    
-	    <div style="max-width: 50%; text-align: right;float: right; margin: 1% auto;">
-	      <figure>
-		<img alt="Plot is still to be created" />
-	      </figure>
-	    </div> 
-
-	     
-	  </section>
-
-	  <section>
-	    <h2>Final Results</h2>
-
-	      <figure>
-		<img alt="Plot is still to be created" />
-	      </figure>
-	     
-	  </section>
-
 	</section>
 
 
@@ -379,13 +421,14 @@ batched_fft_r2c(kernels);
 	  <section>
 	    <h1>Summary</h1>
 	    <ul>
-	      <li>fact 1</li>
-	      <li>fact 2</li>
-	      <li>fact 3</li>
+	      <li class="fragment" style="font-size: 140%">big data is hard, especially on GPUs</li>
+	      <li class="fragment" style="font-size: 140%">asynchronous execution helps <br />(does not make PCIe bus faster)</li>
+	      <li class="fragment" style="font-size: 140%">Waiting for Pascal!</li>
 	    </ul>
-	    <p>
+	    <p style="font-size: 130%" class="fragment">
+	      <br />
 	    For details, come to:<br>
-	    <a href="https://github.com/psteinb/libmultiviewnative">github.com/psteinb/libmultiviewnative</a> 
+	    <a href="https://github.com/psteinb/gtc2015">github.com/psteinb/gtc2015</a> 
 	    </p>
 	  </section>
 
@@ -393,7 +436,7 @@ batched_fft_r2c(kernels);
             <h2>Thank you for your attention!</h2>
             <figure>
 	      <a href="http://upload.wikimedia.org/wikipedia/commons/7/7e/Sleeping_students.jpg">
-		<img width="600" style="max-width: 60%" src="local/Sleeping_students.jpg" />
+		<img width="1000" style="max-width: 60%" src="local/Sleeping_students.jpg" />
 	      </a>
 	      <figcaption>from <a href="http://upload.wikimedia.org/wikipedia/commons/7/7e/Sleeping_students.jpg" target="_blank">wikimedia.org</a>
 	      </figcaption>
@@ -418,6 +461,13 @@ batched_fft_r2c(kernels);
       progress: true,
       history: true,
       center: true,
+
+      
+      // The "normal" size of the presentation, aspect ratio will be preserved
+      // when the presentation is scaled to fit different resolutions. Can be
+      // specified using percentage units.
+      width: 1920,
+      height: 1080,
 
       transition: 'slide', // none/fade/slide/convex/concave/zoom
       margin: 0.07,

@@ -47,8 +47,7 @@ data_to_plot <- rbind(data_to_plot, gpu_only)
 
 runtime_gpu <- ggplot(filter(data_to_plot, !grepl("2090", dev_name)), aes(x=data_in_mb, y=as.numeric(total_time_ms), color=tx_type )) 
 runtime_gpu <- runtime_gpu + geom_line(aes(linetype=as.factor(dev_name)),size=1.5) + my_theme + scale_linetype_manual(values=c(5,3,1,8,10))
-runtime_gpu <- runtime_gpu + ylab("runtime / ms") + xlab("input data / MB")+ guides(linetype=guide_legend(nrow=2))  + ylim(100,.9*max(c(data_to_plot$total_time_ms))) + scale_y_log10()
-
+runtime_gpu <- runtime_gpu + ylab("runtime / ms") + xlab("input data / MB")+ guides(linetype=guide_legend(nrow=2))  + ylim(100,.9*max(c(data_to_plot$total_time_ms))) + scale_y_log10() 
 ggsave("batched_all_cgpu_runtime.png",runtime_gpu)
 ggsave("batched_all_cgpu_runtime.svg",runtime_gpu)
 ggsave("batched_all_cgpu_runtime.pdf",runtime_gpu)
@@ -59,11 +58,27 @@ runtime_gpu <- ggplot(data_to_plot, aes(x=data_in_mb, y=as.numeric(total_time_ms
 runtime_gpu <- runtime_gpu + geom_line(size=1.5) + my_theme  +scale_color_brewer(palette="Set1") 
 runtime_gpu <- runtime_gpu + scale_linetype_manual(values=c("solid","dashed","dotted"))
 runtime_gpu <- runtime_gpu + guides(color=guide_legend(ncol=3)) + theme(legend.position="top")
-runtime_gpu <- runtime_gpu + ylab("runtime / ms") + xlab("input data / MB")+ guides(linetype=guide_legend(nrow=1))  + ylim(100,.9*max(c(data_to_plot$total_time_ms))) + scale_y_log10()
+runtime_gpu <- runtime_gpu + ylab("runtime / ms") + xlab("input data / MB")+ guides(linetype=guide_legend(nrow=1))  + ylim(100,.9*max(c(data_to_plot$total_time_ms))) + scale_y_log10() + xlim(1,1.25*max(filter(data_to_plot, grepl("K20", dev_name))$data_in_mb))
+
 
 ggsave("batched_cgpu_runtime.png",runtime_gpu)
 ggsave("batched_cgpu_runtime.svg",runtime_gpu)
 ggsave("batched_cgpu_runtime.pdf",runtime_gpu)
+
+yvalues <- filter(data_to_plot, grepl("K20", dev_name))
+nyv <- as.numeric(yvalues$total_time_ms)
+runtime_gpu_synced <- ggplot(filter(data_to_plot,tx_type == "sync"), aes(x=data_in_mb, y=as.numeric(total_time_ms), color=as.factor(dev_name) )) 
+runtime_gpu_synced <- runtime_gpu_synced + geom_line(size=1.5) + my_theme  +scale_color_brewer(palette="Set1") 
+runtime_gpu_synced <- runtime_gpu_synced # +scale_y_log10() 
+runtime_gpu_synced <- runtime_gpu_synced + guides(color=guide_legend(ncol=3)) + theme(legend.position="top")
+runtime_gpu_synced <- runtime_gpu_synced + ylab("runtime / ms") + xlab("input data / MB") + ylim(100,.9*max(c(data_to_plot$total_time_ms))) + xlim(1,1.25*max(filter(data_to_plot, grepl("K20", dev_name))$data_in_mb))  + ylim(0,1.25*max(nyv))
+
+
+
+ggsave("batched_cgpu_runtime_sync.png",runtime_gpu_synced)
+ggsave("batched_cgpu_runtime_sync.svg",runtime_gpu_synced)
+ggsave("batched_cgpu_runtime_sync.pdf",runtime_gpu_synced)
+
 
 #pick only entries that are both in cpu and gpu
 select_sizes <- function(tag, cpu_data, gpu_data) {
