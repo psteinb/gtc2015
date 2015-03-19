@@ -1,22 +1,13 @@
-# Test-Driven Development
+# Streaming FFTs on large 3D microscope image data
 
-This repository contains slides for introducing test-driven development to experienced C++ programmers. The presentation entails a live coding and a demonstration (both not part of the slides).
+## Slides to the 2015 GTC Talk by Peter Steinbach
 
-## Code Examples
-
-The code examples are contained in the `demo` folder.
-
+The slides can be viewed from <idisk.mpi-cbg.de/gtc2015/index.html>.
 
 ## License
 
-The slides are licensed under the creative commons by attribution license 4.0. The full license is available in the LICENSE file.
+<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/80x15.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
 
-## Disclaimer
+## Contact
 
-All material (mostly images) contained in the slides are linked to their source if not produced by the author. If you find your intellectual property is not attributed to your satisfaction, feel free to contact me (steinbach@scionics.de).
-
-## Open Source Teaching
-
-If you find mistakes or would like to discuss my approach to teaching this topic feel free to get in touch by mail (steinbach@scionics.de) or through the github issue tracker.
-
-
+For Questions, concerns and remarks, please use the github issue tracker.

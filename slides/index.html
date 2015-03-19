@@ -74,8 +74,7 @@
 	<section>
 	  <h1>Outline</h1>
             <ol style="font-size: 120%;">                                                                                                      
-              <li>SPIM and the biological data deluge</li>                                                                                                              
-              <li>Multi-View Deconvolution</li>
+              <li>SPIM and the biological data deluge</li>                                                                                                                            <li>Multi-View Deconvolution</li>
               <li>From Model Systems to a Library</li>
             </ol>
 	</section>
@@ -97,7 +96,7 @@
 	      <video poster="video/Drosophila_Embryogenesis_beads_removed.png" controls>
 		<source src="video/Drosophila_Embryogenesis_beads_removed.webm" type='video/webm; codecs="vp8.0, vorbis"'>
 		  <source src="video/Drosophila_Embryogenesis_beads_removed.mp4" type='video/mp4'>
-		    <p>This is fallback content</p>
+		    <p>Movie does not work! Sorry!</p>
 	      </video>
 			
 	  </section>
@@ -116,17 +115,23 @@
                     </tr>                                                                                                        
                   </thead>
 		  <tbody>
+		    <tr>                                                                                                         
+                      <td>custom</td>
+                      <td style="text-align: right">16</td>
+                      <td style="text-align: right">928x390x390</td>
+                      <td style="text-align: right">.8</td>
+                  </tr>
 		  <tr>                                                                                                         
                       <td>custom</td>
                       <td style="text-align: right">16</td>
-                      <td style="text-align: right">2048x2048x800</td>
-                      <td style="text-align: right">6.4</td>
+                      <td style="text-align: right">1670x1070x345</td>
+                      <td style="text-align: right">4.7</td>
                   </tr>
 		  <tr>                                                                                                         
                     <td>propriatary</td>
                     <td style="text-align: right">16</td>
-                    <td style="text-align: right">1920x1920x436</td>
-                    <td style="text-align: right">3.1</td>
+                    <td style="text-align: right">1920x1920x320</td>
+                    <td style="text-align: right">5.6</td>
                   </tr> 
                   </tbody>
               </table>
@@ -154,6 +159,16 @@
 	  </section>
 
 	  <section>
+	    <a href="http://www.nature.com/nmeth/journal/v11/n6/full/nmeth.2929.html"><h2>Considerable Contrast Enhancements</h2></a>
+	    <video poster="video/Celegans_lateral_one_view_versus_deconvolved.png" controls>
+	      <source src="video/Celegans_lateral_one_view_versus_deconvolved.mp4" type='video/webm; codecs="vp8.0, vorbis"'>
+		<source src="video/Celegans_lateral_one_view_versus_deconvolved.mp4" type='video/mp4'>
+		  <p>Movie does not work! Sorry!</p>
+	    </video>
+	  </section>
+
+
+	  <section>
 	    <h2>Algorithm</h2>
 	    <pre><code>
 stack_f32 running = stack_f32(const);
@@ -172,7 +187,7 @@ for( i : n_iterations){
 	    </code></pre>
 	    <ul >
 	      <li>data type conversion from 16bit to 32bit</li>
-	      <li>time domain convolutions not feasible due to kernel size</li>
+	      <li>time domain convolutions not feasible due to kernel size (79x121x101)</li>
 	    </ul>
 
 	  </section>
@@ -203,7 +218,7 @@ for( i : n_iterations){
 
 	    <div style="max-width: 60%; text-align: right;float: right;">
 	      <figure>
-		<img src="figures/gpu_cufft_r2c_incl_tx_incl_alloc_global_plan.png" alt="gpu_vs_cpu" />
+		<img src="figures/synced_gpu_runtime.svg" alt="gpu_vs_cpu" />
 	      </figure>
 	    </div> 
 	  </section>
@@ -212,7 +227,7 @@ for( i : n_iterations){
 	    <h2>3D FFTs: CUDA API</h2>
 	    <div style="max-width: 60%; text-align: left;float: left; margin: 1% auto;">
 	      <figure>
-		<img src="figures/api_fraction_cufft_r2c_incl_tx_incl_alloc_inplace_global_plan.png" alt="gpu_vs_cpu CUDA API" />
+		<img src="figures/synced_gpu_api_fraction.svg" alt="gpu_vs_cpu CUDA API" />
 	      </figure>
 	    </div> 
 	    
