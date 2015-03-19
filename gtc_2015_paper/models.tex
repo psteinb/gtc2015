@@ -69,7 +69,7 @@ Firgure \ref{fig:single_fft_api_fraction} implies, that if data transfer can be 
 
 \clearpage
 \subsection{Batched FFTs}
-As the transform of a single data volume is of minimal use for the application at hand, the next step is to study the transform of a sequence of image stacks with fixed sizes. In all of the following figures and discussions, 8 image stacks were used per experiment and shape configuration.\\newline
+As the transform of a single data volume is of minimal use for the application at hand, the next step is to study the transform of a sequence of image stacks with fixed sizes. In all of the following figures and discussions, 8 image stacks were used per experiment and shape configuration. All given data volumes refer to the data processed during one iteration of the experiment (here, 10 repeats were used). \newline
  
 \begin{lstlisting}[caption={Batched FFT on synthetic data performed on CPU in pseudo-code based on the \fftw{} syntax.},label={lst:batched_fft_cpu}]
 stack_f32 synthetic_data[n_view];
@@ -129,7 +129,7 @@ for ( v : n_view ){
   cudaMemcpyAsync(synthetic_data[v] -> d_buffer[v \% 2],streams[v \% 2]);
   cudaEventRecord(stream_events[v],streams[v \% 2]);
   cudaStreamWaitEvent(streams[v \% 2],stream_events[v - 1]);
-  cufftExecR2C(plans[v \% 2], d_buffer[v \% 2]) // on stream d_buffer[v \% 2]
+  cufftExecR2C(plans[v \% 2], d_buffer[v \% 2]) // on stream streams[v \% 2]
   cudaMemcpyAsync(d_buffer[v \% 2] -> synthetic_data[v],streams[v \% 2]);
 }
 cudaDeviceSynchronize();
@@ -167,14 +167,105 @@ The synchronized implementation in figure \ref{fig:rt_batched_fft} is on par wit
 The implementation referred to as ``async2plans'' in figure \ref{fig:rt_batched_fft} notes the results of listing \ref{lst:batched_fft_gpu_async2plans} in practise. Given an input data volume of $\unit[50-250]{MB}$, this implementation is faster than the \cpu{} implementation, but does not attain results above a certain data volume compared to e.g. the ``sync'' method. This is due to the fact that it requires device memory of the size of 2 input stacks as well as the workarea for two FFT transforms. This of course depends on the \gpu{} model as to what amount of device memory is available. % This is due to the fact that both the GeForce Titan Black and the Tesla M2090 do only contain 1 copy engine. The device is henceforth forced to serialize asynchronous data transfers and kernel execution.
 \newline
 
-For large data sets, the real-to-complex FFT transform performed on a \gpu{} appears not to supersede the performance of \cpu{} based implementations by a large amount. As for larger memory transfers, the time per transfer increases dramatically over the time needed for FFT relevant computations, this effect can be attributed to the PCI Express bus bandwidth and speed. Thus, the performance of ``sync'' and ``planmany'' implementations in figure \ref{fig:rt_batched_fft} must exhibit a similar behavior.
+For large data sets, the real-to-complex FFT transform performed on a \gpu{} appears not to supersede the performance of \cpu{} based implementations by a large amount. As for larger memory transfers, the time per transfer increases dramatically over the time needed for FFT relevant computations, this effect can be attributed to the PCI Express bus bandwidth and speed. Thus, the performance of ``sync'' and ``planmany'' implementations in figure \ref{fig:rt_batched_fft} must exhibit a similar behavior.\newline
+
+
 
 \clearpage
 \subsection{Batched Convolutions}
 
-The next level of discussing the performance of multi-view deconvolution is to look at batched 3D image convolutions. Synthetic data was used again to make up 8 training data sets, all of which were convolve with a filter kernel of size $21 \times 21 \times 21$.\\newline 
+The next level of discussing the performance of multi-view deconvolution is to look at batched 3D image convolutions. Synthetic data was used again to make up 8 training data sets, all of which were convolve with a filter kernel of size $21 \times 21 \times 21$. In order to remain as close as possible to the final use case, 8 synthetic kernel image stacks are generated accordingly. All given data volumes below refer to the data processed during one iteration of the experiment (here, 10 repeats were used). \newline
 
+\begin{lstlisting}[caption={Asynchronous batched FFT based convolution on synthetic data performed with CUDA. The algorithm is given in pseudo-code based on the CUDA and \cufft{} API.},label={lst:batched_folds}]
+stack_f32 synthetic_data[n_view];
+stack_f32 kernel_data[n_view];
+fftwf_plan plans[2];
+cudaStream_t streams[2];
+float* d_buffer[2];
+// ... initialize 
 
+inplace_forward_transform(kernel_data[:]);
+
+//start timing
+cudaMemcpyAsync(kernel_data[0] -> d_buffer[kernel],streams[kernel]);
+  
+for ( v : n_view ){
+  cudaMemcpyAsync(synthetic_data[v] -> d_buffer[image],streams[image]);
+  cufftExecR2C(plans[image], d_buffer[image]) // on stream streams[image]
+  
+  cudaDeviceSynchronize();
+
+  multiply<<< .. , .. , 0 , streams[image]>>>(d_buffer[image],d_buffer[kernel],...);
+  cudaMemcpyAsync(kernel_data[v+1] -> d_buffer[kernel],streams[kernel]);
+  
+  cufftExecC2R(plans[image], d_buffer[image]) // on stream streams[image]
+  cudaMemcpyAsync(d_buffer[image] -> synthetic_data[v],streams[image]);
+}
+cudaDeviceSynchronize();
+//end timing
+
+//clean-up
+\end{lstlisting}
+
+Listing \ref{lst:batched_folds} describes the implementation chosen. Contrary to the discussion of the previous section, it is unfeasible to use event driven synchronisation at this point. The reason for this is, that the multiplication step required by the convolution theorem (equation \ref{eq:convol_theorem}) imposes an implicit barrier to the algorithm because both the forward transformed image and filter kernel have to be present in order for the multiplication to take place. The function denoted \texttt{inplace\_forward\_transform} will perform the real-to-complex tranforms of all filter kernels before the actual loop through the image stacks. If the implementation would not execute this transform before the loop, the FFT transform of the kernel filters would need to be performed inside the main loop. This however would inly be parallisable on Tesla \gpu{}s because they hold 2 copy engines that allow 2 parallel to-device and to-host transfers.  
+
+\begin{figure}[hbt]
+  \centering
+    \includegraphics[width=\textwidth]{plots/batched_folds_gpu_speed_up}
+  \caption{Speed-Ups for 3D FFT based image convolutions on a batch of 8 image buffers from synthetic data and 8 kernel filters. The results are compared to the \cpu{} implementation with \fftw{} for different \gpu{} models.}
+  \label{fig:su_batched_fold}
+\end{figure}
+
+Figure \ref{fig:su_batched_fold} reports the speed-up measurements where the baseline \cpu{} implementation was obtained with \fftw{} on a 16 core Haswell host. The generel trend is again similar to observations from figure \ref{fig:rt_batched_fft}. This is due to the fact that, the additional computational expenses from the multiplication step do not mitigate the overall asymmetry of transfer timing versus computational effots. This is most visible for the ``plan\_many'' implementation, which suffers greatly from this effect. Further, the ``interleaved'' algorithm from listing \ref{lst:batched_folds} is found to have superiour performance to the ``plan\_many'' implementation and also is capable of consuming larger datasets, which is the final goal with respect to \lmvn{}. 
+ 
 \clearpage
 \subsection{Library Implementation}
+
+For implementing \lmvn{} according to listing \ref{lst:java_implementation}, two strategies will be compared. First, the algorithm could be implemented entirely on device, i.e. all input and output data (if possible) is copied to the \gpu{} where actual iterative deconvolution is performed. As a second alternative, an interleaved strategy is chosed again as it has provided promising results in the previous discussion. All given data volumes below refer to the data processed during one iteration of the experiment (here, 10 repeats were used).  \newline
+
+\begin{lstlisting}[caption={Interleaved implementation of Multi-View Deconvolution. The algorithm is given in pseudo-code based on the CUDA and \cufft{} API.},label={lst:interleaved_mvd}]
+stack_f32 psi = stack_f32(const);
+stack_f32 view[n_view], kernel1[n_view],     //loaded from disk
+	  kernel2[n_view], weights[n_view];  //loaded from disk
+
+float* d_buffers[4];
+cudaStream_t streams[2];
+//initialize
+
+inplace_forward_transform(kernel1[:]);
+inplace_forward_transform(kernel2[:]);
+
+//end timing
+for( i : n_iterations ){
+  cudaMemcpyAsync(kernel1[0] -> d_buffers[0],streams[0]);  
+  for( v : n_view ){
+    cudaMemcpy(d_buffers[psi] -> d_buffers[temp]); 
+    d_buffers[temp] = convolve(d_buffers[temp],d_buffers[0],stream[0]);
+    cudaMemcpyAsync(kernel2[v] -> d_buffers[0],streams[0]);
+    cudaMemcpyAsync(view[v] -> d_buffers[1],streams[1]);
+    divide<<<..,..,0,streams[1]>>>(d_buffers[1],d_buffers[temp]);
+    d_buffers[temp] = convolve(d_buffers[temp],d_buffers[0],stream[0]);
+    cudaMemcpyAsync(weights[v] -> d_buffers[1],streams[1]);
+    psi = regularize(d_buffers[psi], d_buffers[temp], d_buffers[0]);
+    HANDLE_ERROR(cudaDeviceSynchronize());
+  }
+}
+//end timing
+
+//clean-up
+\end{lstlisting}
+
+Listing \ref{lst:interleaved_mvd} tries to summarize the basic structure of the interleaved implementation of the multi-view deconvolution algorithm chosen. Many initialization, cross checking and cleaning-up steps are left out for clearity. Compute steps are overlaid with host-device transfers to a high degree. Currently, the synchronisation is done through \texttt{cudaDeviceSynchronize}, although that an event-based synchronisation might provide more fine granularity. This optimisation is left out for later studies.\newline
+
+\begin{figure}[hbt]
+  \centering
+    \includegraphics[width=\textwidth]{plots/deconvolve_synthetic_gpu_speed_up}
+  \caption{Speed-Ups for 3D FFT based image convolutions on a batch of 8 image buffers from synthetic data and 8 kernel filters. The results are compared to the \cpu{} implementation with \fftw{} for different \gpu{} models.}
+  \label{fig:synthetic_deconvolution}
+\end{figure}
+
+Figure \ref{fig:synthetic_deconvolution} summarizes the performance gain through the interleaving strategy. We can reproduce the speed-up of $2$ that \cite{2013arXiv1308.0730P} described as well. The different numbers for the ``all\_on\_device'' implementation on the \textit{Tesla K20c} versus the \textit{GeForce Titan Black} can be attributed to the higher clock rate and overall higher computational power of the latter. The ``all\_on\_device'' curve ends at $\unit[32*4*6 = 768]{MB}$ because the experiment requires not only additional temporary buffers (``temp'', ``psi''), but also the workarea for the two involve FFT operations. The performance increase towards large data sets is due to the more favorible ration of computations versus memory transfers here.\newline
+
+By the nature of the interleaved strategy, it is capable of handling far more data than the standard ``all\_on\_device'' version. It programmatically uploads data from the \gpu{} host when and if it is needed. Further, strict concurrent execution of computation and memory transfers accelerate this method even more which enables it to deliver up to 7 times the performance of a $2\times{}8$-core Haswell \cpu{}. The performance difference between the \textit{Tesla K20c} and the \textit{GeForce Titan Black} shows itself in a modest fashion, as listing \ref{lst:interleaved_mvd} contains less parallel transfer regions than the model systems discussed above.
+
 

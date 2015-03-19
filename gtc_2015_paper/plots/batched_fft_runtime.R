@@ -20,7 +20,7 @@ library(ggplot2)
 library(dplyr)
 library(grid)
 
-all_data$data_in_mb <- (as.numeric(all_data$stack_dims_x)*as.numeric(all_data$stack_dims_y)*as.numeric(all_data$stack_dims_z))*4/(1024*1024)
+all_data$data_in_mb <- 8*(as.numeric(all_data$stack_dims_x)*as.numeric(all_data$stack_dims_y)*as.numeric(all_data$stack_dims_z))*4/(1024*1024)
 all_data$shape <- sprintf("%sx%sx%s",all_data$stack_dims_x,all_data$stack_dims_y,all_data$stack_dims_z)
 
 
@@ -47,7 +47,7 @@ data_to_plot <- rbind(data_to_plot, gpu_only)
 
 runtime_gpu <- ggplot(filter(data_to_plot, !grepl("2090", dev_name)), aes(x=data_in_mb, y=as.numeric(total_time_ms), color=tx_type )) 
 runtime_gpu <- runtime_gpu + geom_line(aes(linetype=as.factor(dev_name)),size=1.5) + my_theme + scale_linetype_manual(values=c(5,3,1,8,10))
-runtime_gpu <- runtime_gpu + ylab("runtime / ms") + xlab("input data / MB")+ guides(linetype=guide_legend(nrow=2)) + xlim(0,1024) + ylim(100,.9*max(c(data_to_plot$total_time_ms))) + scale_y_log10()
+runtime_gpu <- runtime_gpu + ylab("runtime / ms") + xlab("input data / MB")+ guides(linetype=guide_legend(nrow=2))  + ylim(100,.9*max(c(data_to_plot$total_time_ms))) + scale_y_log10()
 
 ggsave("batched_all_cgpu_runtime.png",runtime_gpu)
 ggsave("batched_all_cgpu_runtime.svg",runtime_gpu)
@@ -59,7 +59,7 @@ runtime_gpu <- ggplot(data_to_plot, aes(x=data_in_mb, y=as.numeric(total_time_ms
 runtime_gpu <- runtime_gpu + geom_line(size=1.5) + my_theme  +scale_color_brewer(palette="Set1") 
 runtime_gpu <- runtime_gpu + scale_linetype_manual(values=c("solid","dashed","dotted"))
 runtime_gpu <- runtime_gpu + guides(color=guide_legend(ncol=3)) + theme(legend.position="top")
-runtime_gpu <- runtime_gpu + ylab("runtime / ms") + xlab("input data / MB")+ guides(linetype=guide_legend(nrow=1)) + xlim(0,1024) + ylim(100,.9*max(c(data_to_plot$total_time_ms))) + scale_y_log10()
+runtime_gpu <- runtime_gpu + ylab("runtime / ms") + xlab("input data / MB")+ guides(linetype=guide_legend(nrow=1))  + ylim(100,.9*max(c(data_to_plot$total_time_ms))) + scale_y_log10()
 
 ggsave("batched_cgpu_runtime.png",runtime_gpu)
 ggsave("batched_cgpu_runtime.svg",runtime_gpu)

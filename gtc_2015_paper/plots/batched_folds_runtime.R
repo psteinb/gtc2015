@@ -21,7 +21,7 @@ library(dplyr)
 library(grid)
 
 # multiply by 8 as this is the default number of stacks in the benchmark (TODO: need to update bench util)
-all_data$data_in_mb <- (as.numeric(all_data$stack_dims_x)*as.numeric(all_data$stack_dims_y)*as.numeric(all_data$stack_dims_z))*4/(1024*1024)
+all_data$data_in_mb <- 2*8*(as.numeric(all_data$stack_dims_x)*as.numeric(all_data$stack_dims_y)*as.numeric(all_data$stack_dims_z))*4/(1024*1024)
 all_data$shape <- sprintf("%sx%sx%s",all_data$stack_dims_x,all_data$stack_dims_y,all_data$stack_dims_z)
 
 
@@ -49,7 +49,7 @@ data_to_plot$dev_name[data_to_plot$dev_name == 'GeForce_GTX_TITAN_Black'] <- 'Ti
 
 runtime_gpu <- ggplot(data_to_plot, aes(x=data_in_mb, y=as.numeric(total_time_ms), color=as.factor(mode),linetype=as.factor(dev_name))) 
 runtime_gpu <- runtime_gpu + geom_line(size=1.5) + my_theme + guides(linetype=FALSE) + scale_y_log10()
-runtime_gpu <- runtime_gpu + ylab("runtime / ms") + xlab("input data / MB")+ guides(color=guide_legend(nrow=2,byrow=TRUE)) #+ xlim(0,1024)
+runtime_gpu <- runtime_gpu + ylab("runtime / ms") + xlab("input data / MB")+ guides(color=guide_legend(nrow=2,byrow=TRUE)) 
 
 ggsave("batched_folds_gpu_runtime.png",runtime_gpu)
 ggsave("batched_folds_gpu_runtime.svg",runtime_gpu)

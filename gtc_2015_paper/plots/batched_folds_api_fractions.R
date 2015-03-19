@@ -29,7 +29,7 @@ my_theme <-  theme_bw() + theme(axis.title.x = element_text(size=20),
 
 gpu_nd_data$cuda_mem_perc <- gpu_nd_data$cudaFree_perc + gpu_nd_data$cudaMalloc_perc
 gpu_nd_data$cuda_cpy_plus_mem <- gpu_nd_data$cuda_mem_perc + gpu_nd_data$cudaMemcpy_perc
-gpu_nd_data$data_in_mb <- as.numeric(gpu_nd_data$stack_dims_x)*as.numeric(gpu_nd_data$stack_dims_z)*as.numeric(gpu_nd_data$stack_dims_y)
+gpu_nd_data$data_in_mb <- 8*2*as.numeric(gpu_nd_data$stack_dims_x)*as.numeric(gpu_nd_data$stack_dims_z)*as.numeric(gpu_nd_data$stack_dims_y)*4/(1024.*1024.)
   
 data_api_asides_selected <- select(gpu_nd_data, dev_name, comment, data_in_mb, cuda_cpy_plus_mem,cuda_mem_perc)
 

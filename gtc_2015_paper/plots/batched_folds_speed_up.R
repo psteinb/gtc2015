@@ -21,7 +21,7 @@ library(dplyr)
 library(grid)
 
 # multiply by 8 as this is the default number of stacks in the benchmark (TODO: need to update bench util)
-all_data$data_in_mb <- (as.numeric(all_data$stack_dims_x)*as.numeric(all_data$stack_dims_y)*as.numeric(all_data$stack_dims_z))*4/(1024*1024)
+all_data$data_in_mb <- 8*(as.numeric(all_data$stack_dims_x)*as.numeric(all_data$stack_dims_y)*as.numeric(all_data$stack_dims_z))*4/(1024*1024)
 all_data$shape <- sprintf("%sx%sx%s",all_data$stack_dims_x,all_data$stack_dims_y,all_data$stack_dims_z)
 
 
