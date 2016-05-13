@@ -8,7 +8,7 @@ The full paper can be downloaded from <idisk.mpi-cbg.de/~steinbac/gtc2015/lmvn.p
 
 ## Video and Slides
 
-The slides are currently hosted on <idisk.mpi-cbg.de/~steinbac/gtc2015/index.html>. A Link to the presentation recording will follow shortly.
+The slides are currently hosted on <idisk.mpi-cbg.de/~steinbac/gtc2015/index.html>. A video recording of the talk is available at <http://on-demand.gputechconf.com/gtc/2015/video/S5208.html>.
 
 ## How to find your way around
 
